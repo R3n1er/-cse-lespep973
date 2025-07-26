@@ -81,16 +81,16 @@ L'application CSE Les PEP 973 suit une **stratégie d'architecture évolutive** 
 
 ### 1.1 Vision du Produit
 
-L'application web du CSE Les PEP 973 vise à moderniser et centraliser la gestion des activités du Comité Social et Économique. Cette plateforme permettra d'améliorer la communication interne, de simplifier les processus administratifs et d'offrir une meilleure expérience aux salariés bénéficiaires.
+L'application web du CSE de l'association LES PEP GUYANE vise à moderniser et centraliser la gestion des activités du Comité Social et Économique. Cette plateforme permettra d'améliorer la communication interne, de simplifier les processus administratifs et d'offrir une meilleure expérience aux salariés bénéficiaires.
 
 ### 1.2 Objectifs Métier
 
-| Objectif                            | Description                                                   | KPI                                      | Statut        |
-| ----------------------------------- | ------------------------------------------------------------- | ---------------------------------------- | ------------- |
-| Améliorer l'engagement des salariés | Augmenter la participation aux activités et événements du CSE | Taux de participation +30%               | 🚀 En cours   |
-| Optimiser la gestion des tickets    | Réduire le temps de traitement des commandes de tickets       | Temps moyen réduit de 75%                | 📋 Planifié   |
-| Simplifier les remboursements       | Dématérialiser le processus de demande et validation          | Délai de traitement < 5 jours            | 📋 Planifié   |
-| Centraliser la communication        | Créer un point d'accès unique aux informations du CSE         | 90% des communications via la plateforme | ✅ Implémenté |
+| Objectif                                                | Description                                                                                  | KPI                                      | Statut        |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------- | ------------- |
+| Améliorer l'engagement des salariés                     | Augmenter la participation aux activités et événements du CSE                                | Taux de participation +30%               | 🚀 En cours   |
+| Optimiser la gestion des tickets de cinéma              | Réduire le temps de traitement des commandes de tickets de cinéma                            | Temps moyen réduit de 75%                | 📋 Planifié   |
+| Simplifier les remboursements des activités culturelles | Dématérialiser le processus de demande et validation de remboursement d'activités culturelle | Délai de traitement < 5 jours            | 📋 Planifié   |
+| Centraliser la communication                            | Créer un point d'accès unique aux informations du CSE                                        | 90% des communications via la plateforme | ✅ Implémenté |
 
 ### 1.3 Critères de Succès
 
@@ -109,16 +109,17 @@ L'application web du CSE Les PEP 973 vise à moderniser et centraliser la gestio
 **Besoins:**
 
 - Consulter les actualités et événements du CSE ✅ **Implémenté**
-- Commander des tickets pour événements 📋 **Planifié**
-- Soumettre des demandes de remboursement 📋 **Planifié**
-- Mettre à jour ses informations personnelles 📋 **Planifié**
+- Commander des tickets de cinéma en Guyane (Cinéma AGORA (Cayenne) et Uranus (Kourou)) 📋 **Planifié**
+- Soumettre des demandes de remboursement ( Remboursement d'entrée pour des activités culturelles déjà réalisées.) 📋 **Planifié**
+- Mettre à jour ses informations personnelles (Ici **uniquement** le nombre des enfants, les dates de naissance des enfants, le numéro de téléphone et l'adresse mail personnel.)📋 **Planifié**
 
 **Parcours utilisateur:**
 
-1. Se connecte avec ses identifiants professionnels ✅ **Implémenté**
-2. Consulte les actualités récentes sur la page d'accueil ✅ **Implémenté**
-3. Accède à son espace personnel pour suivre ses demandes 📋 **Planifié**
-4. Commande des tickets ou soumet une demande de remboursement 📋 **Planifié**
+1. L'utilisateur arrive sur une page de login. **Impléméneté**
+2. Se connecte avec ses identifiants professionnels ✅ **Implémenté**
+3. Consulte les actualités récentes du blog une fois qu'il est connecté à son espace personnel
+4. Accède à son espace personnel pour suivre ses demandes Ces demandes de remboursement ou ces demandes de communication avec les membres gestionnaire du CSE. 📋 **Planifié**
+5. Commande des tickets tickets cinéma ou soumet une demande de remboursement pour participation à un évènement culturel. Le salarié fournit la preuve de participation et un remboursement à hauteur de 50%.📋 **Planifié**
 
 ### 2.2 Salarié Très Occasionnel
 
@@ -143,7 +144,7 @@ L'application web du CSE Les PEP 973 vise à moderniser et centraliser la gestio
 **Besoins:**
 
 - Accès rapide à l'historique de ses demandes 📋 **Planifié**
-- Suivi détaillé de ses commandes et remboursements 📋 **Planifié**
+- Suivi détaillé de ses commandes de tickets cinéma et demandes de remboursements 📋 **Planifié**
 - Notifications personnalisées sur les nouveaux avantages ✅ **Implémenté (Newsletter)**
 - Gestion efficace de son profil et préférences 📋 **Planifié**
 
@@ -157,10 +158,11 @@ L'application web du CSE Les PEP 973 vise à moderniser et centraliser la gestio
 **Profil:** Membre du CSE chargé de la gestion quotidienne  
 **Besoins:**
 
-- Gérer le stock de tickets
-- Valider les commandes
+- Gérer le stock de tickets de cinémas
+- Valider les commandes de tickets de cinéma
 - Examiner les demandes de remboursement
-- Publier des actualités et créer des sondages
+- Publier des actualités sur le blog
+- Peut créer des enquetes de satisfactions et des sondages
 
 **Parcours utilisateur:**
 
@@ -171,7 +173,7 @@ L'application web du CSE Les PEP 973 vise à moderniser et centraliser la gestio
 
 ### 2.5 Trésorier
 
-**Profil:** Responsable financier du CSE  
+**Profil:** Responsable financier du CSE (Trésorier et Trésorier Adjoint)
 **Besoins:**
 
 - Valider les remboursements
@@ -350,7 +352,10 @@ L'application web du CSE Les PEP 973 vise à moderniser et centraliser la gestio
 
 - **Framework:** Next.js 15 avec App Router
 - **Langage:** TypeScript
-- **UI:** React avec Tailwind CSS et shadcn/ui
+- **Librairie CSS:** React avec Tailwind CSS, DaisyUI
+- **Component System** : Shadcn
+- **Icones** : Lineicons, React Icons
+- **Application mobile** : ReactNative, Expo
 - **État:** React Context et SWR pour la gestion des données
 - **Formulaires:** React Hook Form avec Zod pour la validation
 
@@ -358,8 +363,9 @@ L'application web du CSE Les PEP 973 vise à moderniser et centraliser la gestio
 
 - **Infrastructure:** Supabase
 - **Base de données:** PostgreSQL
-- **Authentification:** Supabase Auth avec JWT
+- **Authentification:** Clerk
 - **Stockage:** Supabase Storage pour les fichiers
+- **Stockage des images:** Unpic IMG, Imgur, Aws S3
 - **API:** REST via Supabase et API Routes Next.js
 
 #### 4.1.3 Déploiement

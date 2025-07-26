@@ -18,15 +18,22 @@ import {
   User,
   Mail,
   Phone,
-  MapPin,
   Calendar,
   Save,
   Edit,
   X,
+  Baby,
+  Plus,
+  Trash2,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/config";
 import { formatDate } from "@/lib/utils/formatting";
 import { toast } from "sonner";
+
+interface ChildInfo {
+  name: string;
+  birthDate: string;
+}
 
 interface UserProfile {
   id: string;
@@ -36,6 +43,9 @@ interface UserProfile {
   matricule: string;
   role: string;
   phone: string | null;
+  personal_email: string | null;
+  children_count: number | null;
+  children_birth_dates: ChildInfo[] | null;
   address: string | null;
   etablissement?: string;
   created_at: string | null;
@@ -48,11 +58,10 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
     phone: "",
-    address: "",
-    etablissement: "",
+    personal_email: "",
+    children_count: 0,
+    children_birth_dates: [] as ChildInfo[],
   });
 
   useEffect(() => {
@@ -79,11 +88,10 @@ export default function ProfilePage() {
 
       setProfile(data);
       setFormData({
-        first_name: data.first_name || "",
-        last_name: data.last_name || "",
         phone: data.phone || "",
-        address: data.address || "",
-        etablissement: (data as any).etablissement || "",
+        personal_email: data.personal_email || "",
+        children_count: data.children_count || 0,
+        children_birth_dates: data.children_birth_dates || [],
       });
     } catch (error) {
       console.error("Erreur inattendue:", error);
@@ -96,17 +104,13 @@ export default function ProfilePage() {
     if (!user || !profile) return;
 
     try {
-      const updateData: any = {
-        first_name: formData.first_name,
-        last_name: formData.last_name,
+      const updateData = {
         phone: formData.phone || null,
-        address: formData.address || null,
+        personal_email: formData.personal_email || null,
+        children_count: formData.children_count,
+        children_birth_dates: formData.children_birth_dates,
         updated_at: new Date().toISOString(),
       };
-
-      if (formData.etablissement) {
-        updateData.etablissement = formData.etablissement;
-      }
 
       const { error } = await supabase
         .from("users")
@@ -114,39 +118,70 @@ export default function ProfilePage() {
         .eq("id", user.id);
 
       if (error) {
-        toast.error("Erreur lors de la sauvegarde du profil");
-        console.error("Erreur lors de la sauvegarde:", error);
+        toast.error("Erreur lors de la sauvegarde");
+        console.error("Erreur:", error);
         return;
       }
 
       toast.success("Profil mis à jour avec succès");
       setEditing(false);
-      fetchProfile(); // Recharger les données
+      fetchProfile();
     } catch (error) {
-      toast.error("Erreur inattendue lors de la sauvegarde");
-      console.error("Erreur inattendue:", error);
+      toast.error("Erreur inattendue");
+      console.error("Erreur:", error);
     }
   };
 
-  const handleCancel = () => {
-    if (profile) {
+  const addChild = () => {
+    if (formData.children_birth_dates.length < formData.children_count) {
       setFormData({
-        first_name: profile.first_name || "",
-        last_name: profile.last_name || "",
-        phone: profile.phone || "",
-        address: profile.address || "",
-        etablissement: (profile as any).etablissement || "",
+        ...formData,
+        children_birth_dates: [
+          ...formData.children_birth_dates,
+          { name: "", birthDate: "" },
+        ],
       });
     }
-    setEditing(false);
+  };
+
+  const removeChild = (index: number) => {
+    const newChildren = formData.children_birth_dates.filter(
+      (_, i) => i !== index
+    );
+    setFormData({
+      ...formData,
+      children_birth_dates: newChildren,
+      children_count: Math.min(formData.children_count, newChildren.length),
+    });
+  };
+
+  const updateChild = (
+    index: number,
+    field: keyof ChildInfo,
+    value: string
+  ) => {
+    const newChildren = [...formData.children_birth_dates];
+    newChildren[index] = { ...newChildren[index], [field]: value };
+    setFormData({
+      ...formData,
+      children_birth_dates: newChildren,
+    });
+  };
+
+  const handleChildrenCountChange = (count: number) => {
+    setFormData({
+      ...formData,
+      children_count: count,
+      children_birth_dates: formData.children_birth_dates.slice(0, count),
+    });
   };
 
   if (!isLoaded || loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cse-primary"></div>
-          <span className="ml-2">Chargement du profil...</span>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="text-gray-600">Chargement du profil...</p>
         </div>
       </div>
     );
@@ -154,275 +189,304 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        <h1 className="text-2xl font-bold mb-4">Accès non autorisé</h1>
-        <p className="text-gray-600">
-          Vous devez être connecté pour accéder à cette page.
-        </p>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center space-y-4">
+          <p className="text-red-600">Accès non autorisé</p>
+          <p className="text-gray-600">
+            Veuillez vous connecter pour accéder à cette page.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center space-y-4">
+          <p className="text-red-600">Profil non trouvé</p>
+          <p className="text-gray-600">
+            Impossible de charger les informations du profil.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* En-tête */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Profil utilisateur
-        </h1>
-        <p className="text-gray-600">Gérez vos informations personnelles</p>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Mon Profil</h1>
+          <p className="text-gray-600">Gérez vos informations personnelles</p>
+        </div>
+        <Button
+          onClick={() => setEditing(!editing)}
+          variant={editing ? "outline" : "default"}
+          className="flex items-center gap-2"
+        >
+          {editing ? (
+            <>
+              <X className="w-4 h-4" />
+              Annuler
+            </>
+          ) : (
+            <>
+              <Edit className="w-4 h-4" />
+              Modifier
+            </>
+          )}
+        </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Colonne principale */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Informations personnelles */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    <User className="w-5 h-5" />
-                    Informations personnelles
-                  </CardTitle>
-                  <CardDescription>Vos informations de base</CardDescription>
-                </div>
-                {!editing && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setEditing(true)}
-                  >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Modifier
-                  </Button>
-                )}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Informations personnelles (lecture seule) */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="w-5 h-5" />
+              Informations Professionnelles
+            </CardTitle>
+            <CardDescription>
+              Ces informations sont gérées par les ressources humaines
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-4">
+              <Avatar className="w-16 h-16">
+                <AvatarImage src={user.imageUrl} alt={user.fullName || ""} />
+                <AvatarFallback>
+                  {profile.first_name?.[0]}
+                  {profile.last_name?.[0]}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h3 className="text-xl font-semibold">
+                  {profile.first_name} {profile.last_name}
+                </h3>
+                <Badge variant="secondary">{profile.role}</Badge>
               </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-gray-500" />
+                <span className="text-sm text-gray-600">
+                  Email professionnel:
+                </span>
+                <span className="text-sm">{profile.email}</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <User className="w-4 h-4 text-gray-500" />
+                <span className="text-sm text-gray-600">Matricule:</span>
+                <span className="text-sm font-mono">{profile.matricule}</span>
+              </div>
+
+              {profile.etablissement && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">Établissement:</span>
+                  <span className="text-sm">{profile.etablissement}</span>
+                </div>
+              )}
+
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-gray-500" />
+                <span className="text-sm text-gray-600">Membre depuis:</span>
+                <span className="text-sm">
+                  {profile.created_at ? formatDate(profile.created_at) : "N/A"}
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Informations modifiables */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Phone className="w-5 h-5" />
+              Informations Personnelles
+            </CardTitle>
+            <CardDescription>
+              Informations que vous pouvez modifier selon les directives CSE
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-3">
+              <div>
+                <Label htmlFor="phone">Numéro de téléphone</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  value={
+                    editing ? formData.phone : profile.phone || "Non renseigné"
+                  }
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
+                  disabled={!editing}
+                  placeholder="Ex: +594 6 94 XX XX XX"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="personal_email">Email personnel</Label>
+                <Input
+                  id="personal_email"
+                  type="email"
+                  value={
+                    editing
+                      ? formData.personal_email
+                      : profile.personal_email || "Non renseigné"
+                  }
+                  onChange={(e) =>
+                    setFormData({ ...formData, personal_email: e.target.value })
+                  }
+                  disabled={!editing}
+                  placeholder="votre.email@exemple.com"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="children_count">Nombre d'enfants</Label>
+                <Input
+                  id="children_count"
+                  type="number"
+                  min="0"
+                  max="10"
+                  value={
+                    editing
+                      ? formData.children_count
+                      : profile.children_count || 0
+                  }
+                  onChange={(e) =>
+                    handleChildrenCountChange(parseInt(e.target.value) || 0)
+                  }
+                  disabled={!editing}
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Informations des enfants */}
+        {(formData.children_count > 0 ||
+          (profile.children_birth_dates &&
+            profile.children_birth_dates.length > 0)) && (
+          <Card className="md:col-span-2">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Baby className="w-5 h-5" />
+                Informations des Enfants
+              </CardTitle>
+              <CardDescription>
+                Dates de naissance de vos enfants pour les avantages CSE
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="first_name">Prénom</Label>
-                  {editing ? (
-                    <Input
-                      id="first_name"
-                      value={formData.first_name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, first_name: e.target.value })
-                      }
-                      className="mt-1"
-                    />
-                  ) : (
-                    <p className="mt-1 text-sm text-gray-900">
-                      {profile?.first_name || "Non renseigné"}
-                    </p>
+              {editing ? (
+                <div className="space-y-4">
+                  {Array.from({ length: formData.children_count }).map(
+                    (_, index) => {
+                      const child = formData.children_birth_dates[index] || {
+                        name: "",
+                        birthDate: "",
+                      };
+                      return (
+                        <div key={index} className="flex gap-3 items-end">
+                          <div className="flex-1">
+                            <Label htmlFor={`child_name_${index}`}>
+                              Prénom enfant {index + 1}
+                            </Label>
+                            <Input
+                              id={`child_name_${index}`}
+                              value={child.name}
+                              onChange={(e) =>
+                                updateChild(index, "name", e.target.value)
+                              }
+                              placeholder="Prénom"
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <Label htmlFor={`child_birth_${index}`}>
+                              Date de naissance
+                            </Label>
+                            <Input
+                              id={`child_birth_${index}`}
+                              type="date"
+                              value={child.birthDate}
+                              onChange={(e) =>
+                                updateChild(index, "birthDate", e.target.value)
+                              }
+                            />
+                          </div>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeChild(index)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      );
+                    }
+                  )}
+
+                  {formData.children_birth_dates.length <
+                    formData.children_count && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={addChild}
+                      className="flex items-center gap-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Ajouter les informations
+                    </Button>
                   )}
                 </div>
-                <div>
-                  <Label htmlFor="last_name">Nom</Label>
-                  {editing ? (
-                    <Input
-                      id="last_name"
-                      value={formData.last_name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, last_name: e.target.value })
-                      }
-                      className="mt-1"
-                    />
+              ) : (
+                <div className="space-y-3">
+                  {profile.children_birth_dates &&
+                  profile.children_birth_dates.length > 0 ? (
+                    profile.children_birth_dates.map((child, index) => (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+                      >
+                        <span className="font-medium">
+                          {child.name || `Enfant ${index + 1}`}
+                        </span>
+                        <span className="text-sm text-gray-600">
+                          {child.birthDate
+                            ? formatDate(child.birthDate)
+                            : "Date non renseignée"}
+                        </span>
+                      </div>
+                    ))
                   ) : (
-                    <p className="mt-1 text-sm text-gray-900">
-                      {profile?.last_name || "Non renseigné"}
+                    <p className="text-gray-500 italic">
+                      Aucune information renseignée
                     </p>
                   )}
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <p className="mt-1 text-sm text-gray-900">{profile?.email}</p>
-                <p className="text-xs text-gray-500">
-                  L'email ne peut pas être modifié
-                </p>
-              </div>
-
-              <div>
-                <Label htmlFor="phone">Téléphone</Label>
-                {editing ? (
-                  <Input
-                    id="phone"
-                    value={formData.phone}
-                    onChange={(e) =>
-                      setFormData({ ...formData, phone: e.target.value })
-                    }
-                    className="mt-1"
-                    placeholder="+33 6 12 34 56 78"
-                  />
-                ) : (
-                  <p className="mt-1 text-sm text-gray-900">
-                    {profile?.phone || "Non renseigné"}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="address">Adresse</Label>
-                {editing ? (
-                  <Input
-                    id="address"
-                    value={formData.address}
-                    onChange={(e) =>
-                      setFormData({ ...formData, address: e.target.value })
-                    }
-                    className="mt-1"
-                    placeholder="123 Rue de la Paix, 97300 Cayenne"
-                  />
-                ) : (
-                  <p className="mt-1 text-sm text-gray-900">
-                    {profile?.address || "Non renseigné"}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="etablissement">Établissement</Label>
-                {editing ? (
-                  <Input
-                    id="etablissement"
-                    value={formData.etablissement}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        etablissement: e.target.value,
-                      })
-                    }
-                    className="mt-1"
-                    placeholder="Nom de votre établissement"
-                  />
-                ) : (
-                  <p className="mt-1 text-sm text-gray-900">
-                    {profile?.etablissement || "Non renseigné"}
-                  </p>
-                )}
-              </div>
-
-              {editing && (
-                <div className="flex gap-2 pt-4">
-                  <Button onClick={handleSave}>
-                    <Save className="w-4 h-4 mr-2" />
-                    Sauvegarder
-                  </Button>
-                  <Button variant="outline" onClick={handleCancel}>
-                    <X className="w-4 h-4 mr-2" />
-                    Annuler
-                  </Button>
                 </div>
               )}
             </CardContent>
           </Card>
-
-          {/* Informations professionnelles */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="w-5 h-5" />
-                Informations professionnelles
-              </CardTitle>
-              <CardDescription>Vos informations de carrière</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label>Matricule</Label>
-                  <p className="mt-1 text-sm text-gray-900">
-                    {profile?.matricule || "Non renseigné"}
-                  </p>
-                </div>
-                <div>
-                  <Label>Rôle</Label>
-                  <div className="mt-1">
-                    <Badge variant="outline">
-                      {profile?.role === "admin" && "Administrateur"}
-                      {profile?.role === "gestionnaire" && "Gestionnaire"}
-                      {profile?.role === "salarie" && "Salarié"}
-                      {profile?.role === "tresorerie" && "Trésorerie"}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Colonne latérale */}
-        <div className="space-y-6">
-          {/* Photo de profil */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="w-5 h-5" />
-                Photo de profil
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-center">
-              <Avatar className="w-24 h-24 mx-auto mb-4">
-                <AvatarImage
-                  src={user.imageUrl}
-                  alt={user.firstName || "Utilisateur"}
-                />
-                <AvatarFallback className="text-lg">
-                  {user.firstName?.charAt(0) ||
-                    user.emailAddresses[0]?.emailAddress?.charAt(0) ||
-                    "U"}
-                </AvatarFallback>
-              </Avatar>
-              <p className="text-sm text-gray-500">Photo gérée par Clerk</p>
-            </CardContent>
-          </Card>
-
-          {/* Informations de compte */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-5 h-5" />
-                Informations de compte
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm">
-              <div className="flex items-center gap-2 text-gray-600">
-                <Calendar className="w-4 h-4" />
-                <span>Membre depuis {formatDate(profile?.created_at)}</span>
-              </div>
-              <div className="flex items-center gap-2 text-gray-600">
-                <Calendar className="w-4 h-4" />
-                <span>
-                  Dernière mise à jour {formatDate(profile?.updated_at)}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Actions rapides */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Actions rapides</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button variant="outline" className="w-full justify-start">
-                <Mail className="w-4 h-4 mr-2" />
-                Changer l'email
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                <Phone className="w-4 h-4 mr-2" />
-                Changer le téléphone
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                <MapPin className="w-4 h-4 mr-2" />
-                Changer l'adresse
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+        )}
       </div>
+
+      {editing && (
+        <div className="flex justify-end">
+          <Button onClick={handleSave} className="flex items-center gap-2">
+            <Save className="w-4 h-4" />
+            Enregistrer les modifications
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

@@ -5,6 +5,35 @@
 
 import { BlogPost, User } from "@/types";
 
+// Types pour les données de contact
+export interface ContactInfo {
+  email: string;
+  phone: string;
+  address: {
+    street: string;
+    city: string;
+    postalCode: string;
+    region: string;
+  };
+  hours: {
+    weekdays: string;
+    weekend: string;
+  };
+  socialMedia: {
+    facebook: string;
+    linkedin: string;
+  };
+  emergencyContact: {
+    phone: string;
+    email: string;
+  };
+}
+
+export interface ContactFAQ {
+  question: string;
+  answer: string;
+}
+
 // Mock Users
 export const MOCK_USERS: User[] = [
   {
@@ -187,4 +216,48 @@ export const USER_ROLES = [
   { value: "gestionnaire", label: "Gestionnaire" },
   { value: "admin", label: "Administrateur" },
   { value: "tresorerie", label: "Trésorerie" },
+];
+
+// Informations de contact du CSE
+export const CONTACT_INFO = {
+  email: "cse@lepep973.org",
+  phone: "05 90 XX XX XX",
+  address: {
+    street: "Rue des PEP",
+    city: "Cayenne",
+    postalCode: "97300",
+    region: "Guyane Française"
+  },
+  hours: {
+    weekdays: "Lundi - Vendredi : 8h00 - 17h00",
+    weekend: "Fermé le week-end"
+  },
+  socialMedia: {
+    facebook: "https://facebook.com/cse.lepep973",
+    linkedin: "https://linkedin.com/company/lepep973"
+  },
+  emergencyContact: {
+    phone: "05 90 XX XX XX",
+    email: "urgence@lepep973.org"
+  }
+};
+
+// FAQ Contact
+export const CONTACT_FAQ = [
+  {
+    question: "Comment obtenir mes identifiants de connexion ?",
+    answer: "Contactez le service RH ou envoyez un email à cse@lepep973.org avec votre matricule."
+  },
+  {
+    question: "Quel est le délai de traitement des remboursements ?",
+    answer: "Les demandes de remboursement sont traitées sous 15 jours ouvrés maximum."
+  },
+  {
+    question: "Comment commander des tickets ?",
+    answer: "Connectez-vous à votre espace personnel et rendez-vous dans la section Billetterie."
+  },
+  {
+    question: "Qui contacter en cas de problème technique ?",
+    answer: "Envoyez un email détaillé à cse@lepep973.org en précisant 'Support Technique' en objet."
+  }
 ];

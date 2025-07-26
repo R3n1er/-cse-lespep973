@@ -196,8 +196,8 @@ export default function Home() {
                             </span>
                           </div>
                           <p className="text-xs text-gray-500">
-                            Nouveau collaborateur ? Contactez le service RH pour
-                            obtenir vos accès
+                            Nouveau collaborateur ? Contactez nous pour obtenir
+                            vos accès
                           </p>
                         </div>
                       </div>

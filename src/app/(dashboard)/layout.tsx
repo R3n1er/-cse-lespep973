@@ -22,12 +22,10 @@ import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Profil", href: "/profile", icon: User },
-  { name: "Tickets", href: "/tickets", icon: Ticket },
-  { name: "Remboursements", href: "/remboursements", icon: Euro },
-  { name: "Blog", href: "/blog", icon: MessageSquare },
+  { name: "Tickets Cinéma", href: "/dashboard/tickets", icon: Ticket },
+  { name: "Mon Profil", href: "/dashboard/profile", icon: User },
+  { name: "Blog & Actualités", href: "/blog", icon: MessageSquare },
   { name: "Newsletter", href: "/newsletter", icon: Bell },
-  { name: "Paramètres", href: "/settings", icon: Settings },
 ];
 
 export default function DashboardLayout({
