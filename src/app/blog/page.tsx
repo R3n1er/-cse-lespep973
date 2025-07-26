@@ -1,0 +1,147 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import MainLayout from "@/components/layout/main-layout";
+import Link from "next/link";
+import { BlogPost } from "@/types";
+
+// Mock data (à remplacer par un fetch Supabase)
+const MOCK_POSTS: BlogPost[] = [
+  {
+    id: "1",
+    title: "Bienvenue sur le blog du CSE !",
+    content:
+      "Découvrez toutes les actualités, événements et avantages du CSE Les PEP 973.",
+    category: "Actualités",
+    author_id: "admin",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    published_at: new Date().toISOString(),
+    is_published: true,
+  },
+  {
+    id: "2",
+    title: "Nouveaux tickets disponibles",
+    content:
+      "Les tickets cinéma et loisirs sont à nouveau disponibles en stock !",
+    category: "Tickets",
+    author_id: "admin",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    published_at: new Date().toISOString(),
+    is_published: true,
+  },
+  {
+    id: "3",
+    title: "Remboursements simplifiés",
+    content:
+      "Le processus de remboursement a été simplifié. Déposez vos justificatifs en ligne !",
+    category: "Remboursements",
+    author_id: "admin",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    published_at: new Date().toISOString(),
+    is_published: true,
+  },
+];
+
+const CATEGORIES = ["Actualités", "Tickets", "Remboursements"];
+
+export default function BlogPage() {
+  const [posts, setPosts] = useState<BlogPost[]>(MOCK_POSTS);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState<string | null>(null);
+
+  // TODO: Remplacer par un fetch Supabase
+  useEffect(() => {
+    // setPosts(...)
+  }, []);
+
+  const filteredPosts = posts.filter(
+    (post) =>
+      (!category || post.category === category) &&
+      (post.title.toLowerCase().includes(search.toLowerCase()) ||
+        post.content.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  return (
+    <MainLayout>
+      <div className="container mx-auto py-10">
+        <h1 className="text-3xl font-bold mb-6 text-cse-primary text-center">
+          Blog & Actualités
+        </h1>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              variant={!category ? "cse" : "outline"}
+              onClick={() => setCategory(null)}
+              size="sm"
+            >
+              Toutes
+            </Button>
+            {CATEGORIES.map((cat) => (
+              <Button
+                key={cat}
+                variant={category === cat ? "cse" : "outline"}
+                onClick={() => setCategory(cat)}
+                size="sm"
+              >
+                {cat}
+              </Button>
+            ))}
+          </div>
+          <Input
+            placeholder="Rechercher un article..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="max-w-xs"
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredPosts.length === 0 ? (
+            <div className="col-span-full text-center text-gray-500">
+              Aucun article trouvé.
+            </div>
+          ) : (
+            filteredPosts.map((post) => (
+              <Link
+                key={post.id}
+                href={`/blog/${post.id}`}
+                className="hover:scale-[1.02] transition-transform"
+              >
+                <Card className="h-full flex flex-col justify-between">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold line-clamp-2">
+                      {post.title}
+                    </CardTitle>
+                    <CardDescription className="flex items-center gap-2 mt-2">
+                      <Badge variant="outline">{post.category}</Badge>
+                      <span className="text-xs text-gray-400">
+                        {new Date(
+                          post.published_at ?? post.created_at
+                        ).toLocaleDateString()}
+                      </span>
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-700 line-clamp-3">{post.content}</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))
+          )}
+        </div>
+      </div>
+    </MainLayout>
+  );
+}

@@ -36,6 +36,24 @@ export type BlogPostInsert =
 export type BlogPostUpdate =
   Database["public"]["Tables"]["blog_posts"]["Update"];
 
+// Types pour les commentaires
+export type BlogComment = Database["public"]["Tables"]["blog_comments"]["Row"];
+export type BlogCommentInsert =
+  Database["public"]["Tables"]["blog_comments"]["Insert"];
+export type BlogCommentUpdate =
+  Database["public"]["Tables"]["blog_comments"]["Update"];
+
+// Interface étendue pour les commentaires avec relations
+export interface BlogCommentWithUser extends BlogComment {
+  user?: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+  };
+  replies?: BlogCommentWithUser[];
+}
+
 // Types pour les formulaires
 export type LoginFormValues = {
   email: string;
