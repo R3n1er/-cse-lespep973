@@ -16,6 +16,7 @@ import Link from "next/link";
 import { BlogPost } from "@/types";
 import CommentList from "@/components/blog/CommentList";
 import ReactionButton from "@/components/blog/ReactionButton";
+import SimilarArticles from "@/components/blog/SimilarArticles";
 
 // Mock data (à remplacer par un fetch Supabase)
 const MOCK_POSTS: BlogPost[] = [
@@ -120,6 +121,15 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
         {/* Section des commentaires */}
         <div className="mt-8">
           <CommentList postId={post.id} />
+        </div>
+
+        {/* Section des articles similaires */}
+        <div className="mt-8">
+          <SimilarArticles
+            currentPostId={post.id}
+            category={post.category}
+            maxArticles={3}
+          />
         </div>
       </div>
     </MainLayout>
