@@ -8,6 +8,7 @@ import { ArrowRight, Calendar } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/config";
 import { BlogPost } from "@/types";
+import { formatDate, truncateText } from "@/lib/utils/formatting";
 
 interface SimilarArticlesProps {
   currentPostId: string;
@@ -83,15 +84,6 @@ export default function SimilarArticles({
     fetchSimilarArticles();
   }, [currentPostId, category, maxArticles]);
 
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "";
-    return new Date(dateString).toLocaleDateString("fr-FR", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
   if (loading) {
     return (
       <Card>
@@ -155,9 +147,7 @@ export default function SimilarArticles({
                       )}
                     </div>
                     <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                      {article.content.length > 150
-                        ? `${article.content.substring(0, 150)}...`
-                        : article.content}
+                      {truncateText(article.content, 150)}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
                       <Calendar className="w-3 h-3 text-gray-400" />

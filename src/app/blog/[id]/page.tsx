@@ -18,46 +18,8 @@ import CommentList from "@/components/blog/CommentList";
 import ReactionButton from "@/components/blog/ReactionButton";
 import SimilarArticles from "@/components/blog/SimilarArticles";
 import NewsletterSignup from "@/components/blog/NewsletterSignup";
-
-// Mock data (à remplacer par un fetch Supabase)
-const MOCK_POSTS: BlogPost[] = [
-  {
-    id: "1",
-    title: "Bienvenue sur le blog du CSE !",
-    content:
-      "Découvrez toutes les actualités, événements et avantages du CSE Les PEP 973.",
-    category: "Actualités",
-    author_id: "admin",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    published_at: new Date().toISOString(),
-    is_published: true,
-  },
-  {
-    id: "2",
-    title: "Nouveaux tickets disponibles",
-    content:
-      "Les tickets cinéma et loisirs sont à nouveau disponibles en stock !",
-    category: "Tickets",
-    author_id: "admin",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    published_at: new Date().toISOString(),
-    is_published: true,
-  },
-  {
-    id: "3",
-    title: "Remboursements simplifiés",
-    content:
-      "Le processus de remboursement a été simplifié. Déposez vos justificatifs en ligne !",
-    category: "Remboursements",
-    author_id: "admin",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    published_at: new Date().toISOString(),
-    is_published: true,
-  },
-];
+import { MOCK_BLOG_POSTS } from "@/lib/data/mock";
+import { formatDate } from "@/lib/utils/formatting";
 
 export default function BlogDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -65,7 +27,7 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     // TODO: Remplacer par un fetch Supabase
-    const found = MOCK_POSTS.find((p) => p.id === params.id);
+    const found = MOCK_BLOG_POSTS.find((p: BlogPost) => p.id === params.id);
     setPost(found || null);
   }, [params.id]);
 
@@ -98,9 +60,7 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
             <CardDescription className="flex items-center gap-2 mb-2">
               <Badge variant="outline">{post.category}</Badge>
               <span className="text-xs text-gray-400">
-                {new Date(
-                  post.published_at || post.created_at || new Date()
-                ).toLocaleDateString()}
+                {formatDate(post.published_at || post.created_at)}
               </span>
             </CardDescription>
             <div className="text-sm text-gray-500 mb-2">

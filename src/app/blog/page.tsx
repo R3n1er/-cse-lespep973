@@ -16,51 +16,11 @@ import Link from "next/link";
 import { BlogPost } from "@/types";
 import ReactionButton from "@/components/blog/ReactionButton";
 import NewsletterSignup from "@/components/blog/NewsletterSignup";
-
-// Mock data (à remplacer par un fetch Supabase)
-const MOCK_POSTS: BlogPost[] = [
-  {
-    id: "1",
-    title: "Bienvenue sur le blog du CSE !",
-    content:
-      "Découvrez toutes les actualités, événements et avantages du CSE Les PEP 973.",
-    category: "Actualités",
-    author_id: "admin",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    published_at: new Date().toISOString(),
-    is_published: true,
-  },
-  {
-    id: "2",
-    title: "Nouveaux tickets disponibles",
-    content:
-      "Les tickets cinéma et loisirs sont à nouveau disponibles en stock !",
-    category: "Tickets",
-    author_id: "admin",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    published_at: new Date().toISOString(),
-    is_published: true,
-  },
-  {
-    id: "3",
-    title: "Remboursements simplifiés",
-    content:
-      "Le processus de remboursement a été simplifié. Déposez vos justificatifs en ligne !",
-    category: "Remboursements",
-    author_id: "admin",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    published_at: new Date().toISOString(),
-    is_published: true,
-  },
-];
-
-const CATEGORIES = ["Actualités", "Tickets", "Remboursements"];
+import { MOCK_BLOG_POSTS, BLOG_CATEGORIES } from "@/lib/data/mock";
+import { formatDate, truncateText } from "@/lib/utils/formatting";
 
 export default function BlogPage() {
-  const [posts, setPosts] = useState<BlogPost[]>(MOCK_POSTS);
+  const [posts, setPosts] = useState<BlogPost[]>(MOCK_BLOG_POSTS);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string | null>(null);
 
@@ -91,7 +51,7 @@ export default function BlogPage() {
             >
               Toutes
             </Button>
-            {CATEGORIES.map((cat) => (
+            {BLOG_CATEGORIES.map((cat: string) => (
               <Button
                 key={cat}
                 variant={category === cat ? "cse" : "outline"}
@@ -129,15 +89,13 @@ export default function BlogPage() {
                     <CardDescription className="flex items-center gap-2 mt-2">
                       <Badge variant="outline">{post.category}</Badge>
                       <span className="text-xs text-gray-400">
-                        {new Date(
-                          post.published_at || post.created_at || new Date()
-                        ).toLocaleDateString()}
+                        {formatDate(post.published_at || post.created_at)}
                       </span>
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex-1 flex flex-col">
                     <p className="text-gray-700 line-clamp-3 mb-4">
-                      {post.content}
+                      {truncateText(post.content, 150)}
                     </p>
 
                     {/* Bouton de réaction */}
