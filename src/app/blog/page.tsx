@@ -15,6 +15,7 @@ import MainLayout from "@/components/layout/main-layout";
 import Link from "next/link";
 import { BlogPost } from "@/types";
 import ReactionButton from "@/components/blog/ReactionButton";
+import NewsletterSignup from "@/components/blog/NewsletterSignup";
 
 // Mock data (à remplacer par un fetch Supabase)
 const MOCK_POSTS: BlogPost[] = [
@@ -148,6 +149,15 @@ export default function BlogPage() {
               </Link>
             ))
           )}
+        </div>
+
+        {/* Section Newsletter */}
+        <div className="mt-12">
+          <NewsletterSignup
+            title="Restez informé"
+            description="Recevez nos dernières actualités et événements directement dans votre boîte mail"
+            showNames={true}
+          />
         </div>
       </div>
     </MainLayout>

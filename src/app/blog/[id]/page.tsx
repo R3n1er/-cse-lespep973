@@ -17,6 +17,7 @@ import { BlogPost } from "@/types";
 import CommentList from "@/components/blog/CommentList";
 import ReactionButton from "@/components/blog/ReactionButton";
 import SimilarArticles from "@/components/blog/SimilarArticles";
+import NewsletterSignup from "@/components/blog/NewsletterSignup";
 
 // Mock data (à remplacer par un fetch Supabase)
 const MOCK_POSTS: BlogPost[] = [
@@ -129,6 +130,15 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
             currentPostId={post.id}
             category={post.category}
             maxArticles={3}
+          />
+        </div>
+
+        {/* Section Newsletter */}
+        <div className="mt-8">
+          <NewsletterSignup
+            title="Newsletter"
+            description="Recevez nos prochains articles directement dans votre boîte mail"
+            showNames={false}
           />
         </div>
       </div>

@@ -54,6 +54,14 @@ export interface BlogCommentWithUser extends BlogComment {
   replies?: BlogCommentWithUser[];
 }
 
+// Types pour les abonnements newsletter
+export type NewsletterSubscription =
+  Database["public"]["Tables"]["newsletter_subscriptions"]["Row"];
+export type NewsletterSubscriptionInsert =
+  Database["public"]["Tables"]["newsletter_subscriptions"]["Insert"];
+export type NewsletterSubscriptionUpdate =
+  Database["public"]["Tables"]["newsletter_subscriptions"]["Update"];
+
 // Types pour les formulaires
 export type LoginFormValues = {
   email: string;
