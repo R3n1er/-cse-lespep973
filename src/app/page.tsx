@@ -23,15 +23,10 @@ export default function Home() {
             Votre espace dédié pour accéder aux services, actualités et
             avantages de votre Comité Social et Économique.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <div className="flex justify-center">
             <Link href="/auth/login">
               <Button variant="cse" size="lg">
                 Se connecter
-              </Button>
-            </Link>
-            <Link href="/auth/register">
-              <Button variant="outline" size="lg">
-                Créer un compte
               </Button>
             </Link>
           </div>
@@ -174,16 +169,14 @@ export default function Home() {
       {/* CTA Section */}
       <section className="py-16 bg-cse-primary text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">
-            Rejoignez-nous dès maintenant
-          </h2>
+          <h2 className="text-3xl font-bold mb-6">Accédez à vos services</h2>
           <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Créez votre compte pour accéder à tous les services et avantages
+            Connectez-vous pour accéder à tous les services et avantages
             proposés par votre CSE.
           </p>
-          <Link href="/auth/register">
+          <Link href="/auth/login">
             <Button variant="cse-light" size="lg">
-              Créer un compte
+              Se connecter
             </Button>
           </Link>
         </div>
