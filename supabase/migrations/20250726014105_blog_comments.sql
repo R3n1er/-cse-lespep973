@@ -19,6 +19,14 @@ CREATE INDEX IF NOT EXISTS idx_blog_comments_approved ON blog_comments(is_approv
 -- RLS (Row Level Security) pour les commentaires
 ALTER TABLE blog_comments ENABLE ROW LEVEL SECURITY;
 
+-- Supprimer les politiques existantes si elles existent
+DROP POLICY IF EXISTS "Les utilisateurs peuvent voir les commentaires approuvés" ON blog_comments;
+DROP POLICY IF EXISTS "Les utilisateurs connectés peuvent créer des commentaires" ON blog_comments;
+DROP POLICY IF EXISTS "Les utilisateurs peuvent modifier leurs propres commentaires" ON blog_comments;
+DROP POLICY IF EXISTS "Les utilisateurs peuvent supprimer leurs propres commentaires" ON blog_comments;
+DROP POLICY IF EXISTS "Les administrateurs et gestionnaires peuvent voir tous les commentaires" ON blog_comments;
+DROP POLICY IF EXISTS "Les administrateurs et gestionnaires peuvent modérer les commentaires" ON blog_comments;
+
 -- Politique : Les utilisateurs peuvent voir les commentaires approuvés
 CREATE POLICY "Les utilisateurs peuvent voir les commentaires approuvés" ON blog_comments
     FOR SELECT USING (is_approved = true);
@@ -39,8 +47,8 @@ CREATE POLICY "Les utilisateurs peuvent supprimer leurs propres commentaires" ON
 CREATE POLICY "Les administrateurs et gestionnaires peuvent voir tous les commentaires" ON blog_comments
     FOR ALL USING (
         EXISTS (
-            SELECT 1 FROM users u 
-            WHERE u.id = auth.uid() 
+            SELECT 1 FROM users u
+            WHERE u.id = auth.uid()
             AND u.role IN ('admin', 'gestionnaire')
         )
     );
@@ -49,13 +57,14 @@ CREATE POLICY "Les administrateurs et gestionnaires peuvent voir tous les commen
 CREATE POLICY "Les administrateurs et gestionnaires peuvent modérer les commentaires" ON blog_comments
     FOR UPDATE USING (
         EXISTS (
-            SELECT 1 FROM users u 
-            WHERE u.id = auth.uid() 
+            SELECT 1 FROM users u
+            WHERE u.id = auth.uid()
             AND u.role IN ('admin', 'gestionnaire')
         )
     );
 
 -- Trigger pour mettre à jour le champ updated_at
+DROP TRIGGER IF EXISTS update_blog_comments_updated_at ON blog_comments;
 CREATE TRIGGER update_blog_comments_updated_at
   BEFORE UPDATE ON blog_comments
   FOR EACH ROW

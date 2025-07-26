@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from "@/lib/supabase/config";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
         .single();
 
       // Si l'utilisateur n'existe pas dans la table users, l'ajouter
-      if (!existingUser) {
+      if (!existingUser && user.email) {
         const userData = {
           id: user.id,
           email: user.email,
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
             user.user_metadata.family_name ||
             "",
           matricule: user.user_metadata.matricule || "",
-          role: "salarie", // Rôle par défaut
+          role: "salarie" as const, // Rôle par défaut
           is_active: true,
         };
 

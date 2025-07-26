@@ -1,7 +1,7 @@
 -- Migration : Table newsletter_subscriptions pour gestion des abonnements à la newsletter
 CREATE TABLE IF NOT EXISTS newsletter_subscriptions (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    email text NOT NULL UNIQUE,
+    email text NOT NULL,
     first_name text,
     last_name text,
     is_active boolean NOT NULL DEFAULT true,
@@ -10,6 +10,10 @@ CREATE TABLE IF NOT EXISTS newsletter_subscriptions (
     updated_at timestamptz NOT NULL DEFAULT now()
 );
 
+-- Contrainte unique pour l'email (DROP puis CREATE pour éviter les erreurs)
+ALTER TABLE newsletter_subscriptions DROP CONSTRAINT IF EXISTS newsletter_subscriptions_email_key;
+ALTER TABLE newsletter_subscriptions ADD CONSTRAINT newsletter_subscriptions_email_key UNIQUE(email);
+
 -- Index pour recherche rapide
 CREATE INDEX IF NOT EXISTS idx_newsletter_subscriptions_email ON newsletter_subscriptions(email);
 CREATE INDEX IF NOT EXISTS idx_newsletter_subscriptions_active ON newsletter_subscriptions(is_active);
@@ -17,6 +21,12 @@ CREATE INDEX IF NOT EXISTS idx_newsletter_subscriptions_subscribed_at ON newslet
 
 -- RLS (Row Level Security) pour les abonnements
 ALTER TABLE newsletter_subscriptions ENABLE ROW LEVEL SECURITY;
+
+-- Supprimer les politiques existantes si elles existent
+DROP POLICY IF EXISTS "Les utilisateurs peuvent voir leurs propres abonnements" ON newsletter_subscriptions;
+DROP POLICY IF EXISTS "Les utilisateurs peuvent créer des abonnements" ON newsletter_subscriptions;
+DROP POLICY IF EXISTS "Les utilisateurs peuvent modifier leurs propres abonnements" ON newsletter_subscriptions;
+DROP POLICY IF EXISTS "Les administrateurs et gestionnaires peuvent voir tous les abonnements" ON newsletter_subscriptions;
 
 -- Politique : Les utilisateurs peuvent voir leurs propres abonnements
 CREATE POLICY "Les utilisateurs peuvent voir leurs propres abonnements" ON newsletter_subscriptions
@@ -49,6 +59,7 @@ CREATE POLICY "Les administrateurs et gestionnaires peuvent voir tous les abonne
     );
 
 -- Trigger pour mettre à jour le champ updated_at
+DROP TRIGGER IF EXISTS update_newsletter_subscriptions_updated_at ON newsletter_subscriptions;
 CREATE TRIGGER update_newsletter_subscriptions_updated_at
   BEFORE UPDATE ON newsletter_subscriptions
   FOR EACH ROW

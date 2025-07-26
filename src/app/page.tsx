@@ -117,8 +117,9 @@ export default function Home() {
             <div className="md:w-1/2">
               <h2 className="text-3xl font-bold mb-6">À propos du CSE</h2>
               <p className="text-gray-600 mb-4">
-                Le Comité Social et Économique (CSE) des PEP 973 est l'instance
-                représentative du personnel qui vous accompagne au quotidien.
+                Le Comité Social et Économique (CSE) des PEP 973 est
+                l&apos;instance représentative du personnel qui vous accompagne
+                au quotidien.
               </p>
               <p className="text-gray-600 mb-4">
                 Notre mission est de proposer des activités sociales et
@@ -126,8 +127,8 @@ export default function Home() {
                 de travail.
               </p>
               <p className="text-gray-600 mb-6">
-                Composé d'élus engagés, le CSE est à votre écoute pour répondre
-                à vos besoins et vous accompagner dans votre vie
+                Composé d&apos;élus engagés, le CSE est à votre écoute pour
+                répondre à vos besoins et vous accompagner dans votre vie
                 professionnelle.
               </p>
               <Link href="/a-propos">

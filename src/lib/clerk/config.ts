@@ -42,8 +42,8 @@ export const redirectToLogin = (request: NextRequest) => {
 };
 
 // Fonction pour protéger les routes
-export const protectRoute = (request: NextRequest) => {
-  const authObject = auth();
+export const protectRoute = async (request: NextRequest) => {
+  const authObject = await auth();
 
   // Si l'utilisateur n'est pas connecté et que la route n'est pas publique
   if (!authObject.userId && !publicRoutes.includes(request.nextUrl.pathname)) {
@@ -60,7 +60,7 @@ export const protectRoute = (request: NextRequest) => {
   if (
     authObject.userId &&
     request.nextUrl.pathname.startsWith(routePrefix.admin) &&
-    !hasRole(authObject.user, "admin")
+    !hasRole(authObject.sessionClaims, "admin")
   ) {
     const url = new URL("/", request.url);
     return NextResponse.redirect(url);

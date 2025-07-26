@@ -39,7 +39,7 @@ export default function NewsletterPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Bell className="w-5 h-5" />
-                Fréquence d'envoi
+                Fréquence d&apos;envoi
               </CardTitle>
             </CardHeader>
             <CardContent>

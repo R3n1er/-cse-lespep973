@@ -10,8 +10,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Créer le client Supabase
-  const session = await auth();
-  const { userId, sessionClaims } = session;
+  const { userId, sessionClaims } = await auth();
 
   // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté et essaie d'accéder à une route protégée
   if (!userId && !publicRoutes.includes(pathname)) {

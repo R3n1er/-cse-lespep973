@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import {
   Card,
   CardContent,
@@ -21,15 +21,20 @@ import NewsletterSignup from "@/components/blog/NewsletterSignup";
 import { MOCK_BLOG_POSTS } from "@/lib/data/mock";
 import { formatDate } from "@/lib/utils/formatting";
 
-export default function BlogDetailPage({ params }: { params: { id: string } }) {
+interface BlogDetailPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default function BlogDetailPage({ params }: BlogDetailPageProps) {
+  const { id } = use(params);
   const router = useRouter();
   const [post, setPost] = useState<BlogPost | null>(null);
 
   useEffect(() => {
     // TODO: Remplacer par un fetch Supabase
-    const found = MOCK_BLOG_POSTS.find((p: BlogPost) => p.id === params.id);
+    const found = MOCK_BLOG_POSTS.find((p: BlogPost) => p.id === id);
     setPost(found || null);
-  }, [params.id]);
+  }, [id]);
 
   if (!post) {
     return (

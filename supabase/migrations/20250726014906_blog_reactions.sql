@@ -5,10 +5,13 @@ CREATE TABLE IF NOT EXISTS blog_reactions (
     user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     reaction_type text NOT NULL DEFAULT 'like', -- 'like', 'love', 'wow', etc.
     created_at timestamptz NOT NULL DEFAULT now(),
-    updated_at timestamptz NOT NULL DEFAULT now(),
-    -- Contrainte unique pour éviter les doublons
-    UNIQUE(post_id, user_id, reaction_type)
+    updated_at timestamptz NOT NULL DEFAULT now()
 );
+
+-- Contrainte unique pour éviter les doublons (DROP puis CREATE pour éviter les erreurs)
+ALTER TABLE blog_reactions DROP CONSTRAINT IF EXISTS blog_reactions_post_id_user_id_reaction_type_key;
+ALTER TABLE blog_reactions ADD CONSTRAINT blog_reactions_post_id_user_id_reaction_type_key 
+    UNIQUE(post_id, user_id, reaction_type);
 
 -- Index pour recherche rapide
 CREATE INDEX IF NOT EXISTS idx_blog_reactions_post_id ON blog_reactions(post_id);
@@ -17,6 +20,12 @@ CREATE INDEX IF NOT EXISTS idx_blog_reactions_type ON blog_reactions(reaction_ty
 
 -- RLS (Row Level Security) pour les réactions
 ALTER TABLE blog_reactions ENABLE ROW LEVEL SECURITY;
+
+-- Supprimer les politiques existantes si elles existent
+DROP POLICY IF EXISTS "Les utilisateurs peuvent voir toutes les réactions" ON blog_reactions;
+DROP POLICY IF EXISTS "Les utilisateurs connectés peuvent créer des réactions" ON blog_reactions;
+DROP POLICY IF EXISTS "Les utilisateurs peuvent modifier leurs propres réactions" ON blog_reactions;
+DROP POLICY IF EXISTS "Les utilisateurs peuvent supprimer leurs propres réactions" ON blog_reactions;
 
 -- Politique : Les utilisateurs peuvent voir toutes les réactions
 CREATE POLICY "Les utilisateurs peuvent voir toutes les réactions" ON blog_reactions
@@ -35,6 +44,7 @@ CREATE POLICY "Les utilisateurs peuvent supprimer leurs propres réactions" ON b
     FOR DELETE USING (auth.uid() = user_id);
 
 -- Trigger pour mettre à jour le champ updated_at
+DROP TRIGGER IF EXISTS update_blog_reactions_updated_at ON blog_reactions;
 CREATE TRIGGER update_blog_reactions_updated_at
   BEFORE UPDATE ON blog_reactions
   FOR EACH ROW

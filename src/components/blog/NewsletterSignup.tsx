@@ -143,7 +143,7 @@ export default function NewsletterSignup({
               onClick={() => setIsSubscribed(false)}
               className="w-full"
             >
-              S'inscrire à nouveau
+              S&apos;inscrire à nouveau
             </Button>
           </div>
         </CardContent>
@@ -215,7 +215,7 @@ export default function NewsletterSignup({
             ) : (
               <>
                 <Mail className="w-4 h-4 mr-2" />
-                S'inscrire à la newsletter
+                S&apos;inscrire à la newsletter
               </>
             )}
           </Button>
