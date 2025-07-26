@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import MainLayout from "@/components/layout/main-layout";
 import Link from "next/link";
 import { BlogPost } from "@/types";
+import ReactionButton from "@/components/blog/ReactionButton";
 
 // Mock data (à remplacer par un fetch Supabase)
 const MOCK_POSTS: BlogPost[] = [
@@ -128,13 +129,20 @@ export default function BlogPage() {
                       <Badge variant="outline">{post.category}</Badge>
                       <span className="text-xs text-gray-400">
                         {new Date(
-                          post.published_at ?? post.created_at
+                          post.published_at || post.created_at || new Date()
                         ).toLocaleDateString()}
                       </span>
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-700 line-clamp-3">{post.content}</p>
+                  <CardContent className="flex-1 flex flex-col">
+                    <p className="text-gray-700 line-clamp-3 mb-4">
+                      {post.content}
+                    </p>
+
+                    {/* Bouton de réaction */}
+                    <div className="mt-auto pt-4 border-t border-gray-100">
+                      <ReactionButton postId={post.id} />
+                    </div>
                   </CardContent>
                 </Card>
               </Link>

@@ -15,6 +15,7 @@ import MainLayout from "@/components/layout/main-layout";
 import Link from "next/link";
 import { BlogPost } from "@/types";
 import CommentList from "@/components/blog/CommentList";
+import ReactionButton from "@/components/blog/ReactionButton";
 
 // Mock data (à remplacer par un fetch Supabase)
 const MOCK_POSTS: BlogPost[] = [
@@ -105,7 +106,14 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="prose max-w-none text-gray-800">{post.content}</div>
+            <div className="prose max-w-none text-gray-800 mb-6">
+              {post.content}
+            </div>
+
+            {/* Bouton de réaction */}
+            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+              <ReactionButton postId={post.id} />
+            </div>
           </CardContent>
         </Card>
 
