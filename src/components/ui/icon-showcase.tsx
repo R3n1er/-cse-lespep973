@@ -53,8 +53,8 @@ import {
   IoGift,
 } from "react-icons/io5";
 
-// Lineicons React
-import LineIcon from "react-lineicons";
+// Lineicons React - temporairement désactivé
+// import LineIcon from "react-lineicons";
 
 import {
   Card,
@@ -162,61 +162,62 @@ export function IconShowcase({ showAll = false }: IconShowcaseProps) {
       ],
       status: "new",
     },
-    {
-      name: "Lineicons",
-      description: "Collection d'icônes ligne essentielles",
-      package: "react-lineicons",
-      icons: [
-        {
-          component: <LineIcon name="home" style={{ fontSize: "24px" }} />,
-          name: "home",
-        },
-        {
-          component: <LineIcon name="envelope" style={{ fontSize: "24px" }} />,
-          name: "envelope",
-        },
-        {
-          component: <LineIcon name="user" style={{ fontSize: "24px" }} />,
-          name: "user",
-        },
-        {
-          component: <LineIcon name="cog" style={{ fontSize: "24px" }} />,
-          name: "cog",
-        },
-        {
-          component: (
-            <LineIcon
-              name="heart"
-              style={{ fontSize: "24px", color: "#ef4444" }}
-            />
-          ),
-          name: "heart",
-        },
-        {
-          component: (
-            <LineIcon
-              name="star"
-              style={{ fontSize: "24px", color: "#fbbf24" }}
-            />
-          ),
-          name: "star",
-        },
-        {
-          component: (
-            <LineIcon
-              name="ticket"
-              style={{ fontSize: "24px", color: "#3b82f6" }}
-            />
-          ),
-          name: "ticket",
-        },
-        {
-          component: <LineIcon name="calendar" style={{ fontSize: "24px" }} />,
-          name: "calendar",
-        },
-      ],
-      status: "new",
-    },
+    // Temporairement désactivé - problème de types avec react-lineicons
+    // {
+    //   name: "Lineicons",
+    //   description: "Collection d'icônes ligne essentielles",
+    //   package: "react-lineicons",
+    //   icons: [
+    //     {
+    //       component: <LineIcon name="home" style={{ fontSize: "24px" }} />,
+    //       name: "home",
+    //     },
+    //     {
+    //       component: <LineIcon name="envelope" style={{ fontSize: "24px" }} />,
+    //       name: "envelope",
+    //     },
+    //     {
+    //       component: <LineIcon name="user" style={{ fontSize: "24px" }} />,
+    //       name: "user",
+    //     },
+    //     {
+    //       component: <LineIcon name="cog" style={{ fontSize: "24px" }} />,
+    //       name: "cog",
+    //     },
+    //     {
+    //       component: (
+    //         <LineIcon
+    //           name="heart"
+    //           style={{ fontSize: "24px", color: "#ef4444" }}
+    //         />
+    //       ),
+    //       name: "heart",
+    //     },
+    //     {
+    //       component: (
+    //         <LineIcon
+    //           name="star"
+    //           style={{ fontSize: "24px", color: "#fbbf24" }}
+    //         />
+    //       ),
+    //       name: "star",
+    //     },
+    //     {
+    //       component: (
+    //         <LineIcon
+    //           name="ticket"
+    //           style={{ fontSize: "24px", color: "#3b82f6" }}
+    //         />
+    //       ),
+    //       name: "ticket",
+    //     },
+    //     {
+    //       component: <LineIcon name="calendar" style={{ fontSize: "24px" }} />,
+    //       name: "calendar",
+    //     },
+    //   ],
+    //   status: "new",
+    // },
   ];
 
   const cssExamples = [
@@ -254,16 +255,16 @@ export function IconShowcase({ showAll = false }: IconShowcaseProps) {
     <div className="space-y-8">
       <div className="text-center space-y-4">
         <h2 className="text-3xl font-bold text-gray-900">
-          Bibliothèques d'Icônes Disponibles
+          Bibliothèques d&apos;Icônes Disponibles
         </h2>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          L'application CSE dispose maintenant de plusieurs bibliothèques
-          d'icônes pour enrichir l'interface utilisateur selon les
+          L&apos;application CSE dispose maintenant de plusieurs bibliothèques
+          d&apos;icônes pour enrichir l&apos;interface utilisateur selon les
           spécifications du PRD v2.1
         </p>
       </div>
 
-      {/* Bibliothèques d'icônes React */}
+      {/* Bibliothèques d&apos;icônes React */}
       <div className="grid gap-6">
         {displaySets.map((iconSet) => (
           <Card key={iconSet.name} className="relative">
@@ -338,7 +339,7 @@ export function IconShowcase({ showAll = false }: IconShowcaseProps) {
             <div>
               <div className="text-2xl font-bold text-blue-600">5</div>
               <div className="text-sm text-gray-600">
-                Bibliothèques d'icônes
+                Bibliothèques d&apos;icônes
               </div>
             </div>
             <div>

@@ -1,9 +1,8 @@
 "use client";
 
-import { useUser, useClerk } from "@clerk/nextjs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -19,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getCurrentUser, signOut } from "@/lib/supabase/auth";
 
 const navigation = [
   { name: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
@@ -33,14 +33,44 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = useUser();
-  const { signOut } = useClerk();
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    const checkUser = async () => {
+      const { user: currentUser, error } = await getCurrentUser();
+      if (error || !currentUser) {
+        console.log("❌ Pas d'utilisateur connecté, redirection vers /");
+        router.push("/");
+        return;
+      }
+      setUser(currentUser);
+      setLoading(false);
+    };
+
+    checkUser();
+  }, [router]);
+
   const handleSignOut = async () => {
-    await signOut();
+    const { error } = await signOut();
+    if (!error) {
+      router.push("/");
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -93,22 +123,21 @@ export default function DashboardLayout({
             <div className="flex items-center space-x-3 mb-4">
               <Avatar className="h-8 w-8">
                 <AvatarImage
-                  src={user?.imageUrl}
-                  alt={user?.firstName || "Utilisateur"}
+                  src={user?.user_metadata?.avatar_url}
+                  alt={user?.user_metadata?.first_name || "Utilisateur"}
                 />
                 <AvatarFallback>
-                  {user?.firstName?.charAt(0) ||
-                    user?.emailAddresses[0]?.emailAddress?.charAt(0) ||
+                  {user?.user_metadata?.first_name?.charAt(0) ||
+                    user?.email?.charAt(0) ||
                     "U"}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
-                  {user?.firstName} {user?.lastName}
+                  {user?.user_metadata?.first_name}{" "}
+                  {user?.user_metadata?.last_name}
                 </p>
-                <p className="text-xs text-gray-500 truncate">
-                  {user?.emailAddresses[0]?.emailAddress}
-                </p>
+                <p className="text-xs text-gray-500 truncate">{user?.email}</p>
               </div>
             </div>
             <Button
@@ -156,22 +185,21 @@ export default function DashboardLayout({
             <div className="flex items-center space-x-3 mb-4">
               <Avatar className="h-8 w-8">
                 <AvatarImage
-                  src={user?.imageUrl}
-                  alt={user?.firstName || "Utilisateur"}
+                  src={user?.user_metadata?.avatar_url}
+                  alt={user?.user_metadata?.first_name || "Utilisateur"}
                 />
                 <AvatarFallback>
-                  {user?.firstName?.charAt(0) ||
-                    user?.emailAddresses[0]?.emailAddress?.charAt(0) ||
+                  {user?.user_metadata?.first_name?.charAt(0) ||
+                    user?.email?.charAt(0) ||
                     "U"}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
-                  {user?.firstName} {user?.lastName}
+                  {user?.user_metadata?.first_name}{" "}
+                  {user?.user_metadata?.last_name}
                 </p>
-                <p className="text-xs text-gray-500 truncate">
-                  {user?.emailAddresses[0]?.emailAddress}
-                </p>
+                <p className="text-xs text-gray-500 truncate">{user?.email}</p>
               </div>
             </div>
             <Button
@@ -205,12 +233,12 @@ export default function DashboardLayout({
           </div>
           <Avatar className="h-8 w-8">
             <AvatarImage
-              src={user?.imageUrl}
-              alt={user?.firstName || "Utilisateur"}
+              src={user?.user_metadata?.avatar_url}
+              alt={user?.user_metadata?.first_name || "Utilisateur"}
             />
             <AvatarFallback>
-              {user?.firstName?.charAt(0) ||
-                user?.emailAddresses[0]?.emailAddress?.charAt(0) ||
+              {user?.user_metadata?.first_name?.charAt(0) ||
+                user?.email?.charAt(0) ||
                 "U"}
             </AvatarFallback>
           </Avatar>

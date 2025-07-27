@@ -1,7 +1,7 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
+import { getCurrentUser } from "@/lib/supabase/auth";
 import {
   Card,
   CardContent,
@@ -27,7 +27,7 @@ import { toast } from "sonner";
 import { CinemaTicket, CinemaLocation, CINEMAS } from "@/types";
 
 export default function TicketsPage() {
-  const { user, isLoaded } = useUser();
+  const [user, setUser] = useState<any>(null);
   const [tickets, setTickets] = useState<CinemaTicket[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCinema, setSelectedCinema] = useState<CinemaLocation | "all">(
@@ -36,10 +36,15 @@ export default function TicketsPage() {
   const [cart, setCart] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
-    if (isLoaded && user) {
-      fetchTickets();
-    }
-  }, [isLoaded, user, selectedCinema]);
+    const loadUser = async () => {
+      const { user: currentUser } = await getCurrentUser();
+      setUser(currentUser);
+      if (currentUser) {
+        fetchTickets();
+      }
+    };
+    loadUser();
+  }, [selectedCinema]);
 
   const fetchTickets = async () => {
     try {
@@ -104,7 +109,7 @@ export default function TicketsPage() {
     return Object.values(cart).reduce((total, quantity) => total + quantity, 0);
   };
 
-  if (!isLoaded || loading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center space-y-4">
@@ -324,7 +329,8 @@ export default function TicketsPage() {
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Calendar className="w-4 h-4" />
                         <span>
-                          Valable jusqu'au {formatDate(ticket.available_until)}
+                          Valable jusqu&apos;au{" "}
+                          {formatDate(ticket.available_until)}
                         </span>
                       </div>
 
@@ -380,8 +386,8 @@ export default function TicketsPage() {
             Aucun ticket disponible
           </h3>
           <p className="text-gray-600">
-            Il n'y a actuellement aucun ticket de cinéma disponible. Revenez
-            bientôt pour découvrir nos nouvelles offres !
+            Il n&apos;y a actuellement aucun ticket de cinéma disponible.
+            Revenez bientôt pour découvrir nos nouvelles offres !
           </p>
         </Card>
       )}

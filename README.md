@@ -1,4 +1,4 @@
-# CSE Les PEP 973 - Application Web de Gestion
+# CSE LES PEP GUYANE - Application Portail Web de Gestion
 
 ## 🎯 **État Actuel du Projet**
 
@@ -10,11 +10,11 @@ L'application est actuellement en **Phase 1** de développement avec les fonctio
 
 **🔐 Authentification et Sécurité**
 
-- Intégration Clerk avec JWT
-- Restriction de domaine (@lepep973.org bloqué)
-- Formulaire de demande d'accès
+- Authentification Supabase avec JWT
+- Gestion des rôles utilisateurs
 - Middleware sécurisé avec gestion des rôles
 - Politiques RLS (Row Level Security)
+- Formulaires de connexion et inscription
 
 **📝 Blog et Communication**
 
@@ -83,7 +83,7 @@ L'application est actuellement en **Phase 1** de développement avec les fonctio
 ```typescript
 Frontend: Next.js 15 + TypeScript + Tailwind CSS + shadcn/ui
 Backend: Supabase (PostgreSQL + Auth + Storage + Edge Functions)
-Auth: Clerk + JWT + RLS
+Auth: Supabase Auth + JWT + RLS
 Déploiement: Vercel + GitHub Actions
 ```
 
@@ -102,7 +102,6 @@ Déploiement: Vercel + GitHub Actions
 - Node.js 18+
 - npm ou yarn
 - Compte Supabase
-- Compte Clerk
 
 ### **Installation**
 
@@ -135,10 +134,6 @@ npm run dev
 ### **Variables d'Environnement Requises**
 
 ```bash
-# Clerk Authentication
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
-CLERK_SECRET_KEY=sk_test_...
-
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=https://...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
@@ -185,12 +180,132 @@ SUPABASE_SERVICE_ROLE_KEY=...
 
 ## 🔧 **Scripts Disponibles**
 
+### **Scripts de Développement**
+
 ```bash
 npm run dev          # Démarrage en développement
 npm run build        # Build de production
 npm run start        # Démarrage en production
 npm run lint         # Vérification du code
-npm run type-check   # Vérification des types TypeScript
+```
+
+### **Scripts d'Authentification et Utilisateurs**
+
+```bash
+npm run create-user  # Créer un nouvel utilisateur via API Supabase
+npm run update-user  # Mettre à jour le mot de passe d'un utilisateur existant
+npm run test-auth    # Tester l'authentification avec un utilisateur
+```
+
+### **Utilisation des Scripts d'Utilisateurs**
+
+#### **Créer un Utilisateur de Test**
+
+```bash
+# Créer un nouvel utilisateur avec mot de passe
+npm run create-user
+
+# L'utilisateur sera créé avec :
+# - Email: user@toto.com
+# - Mot de passe: password123
+# - Rôle: salarie
+```
+
+#### **Mettre à Jour un Utilisateur Existant**
+
+```bash
+# Mettre à jour le mot de passe d'un utilisateur existant
+npm run update-user
+
+# Utile si l'utilisateur existe déjà dans Supabase
+# mais n'a pas de mot de passe configuré
+```
+
+#### **Tester l'Authentification**
+
+```bash
+# Tester la connexion avec les identifiants
+npm run test-auth
+
+# Vérifie :
+# - Connexion réussie
+# - Récupération de l'utilisateur
+# - Accès à la table users
+# - Déconnexion
+```
+
+### **Identifiants de Test par Défaut**
+
+```bash
+Email: user@toto.com
+Mot de passe: password123
+Rôle: salarie
+```
+
+**🌐 Testez la connexion sur :** http://localhost:3000 (ou 3001 si le port 3000 est occupé)
+
+## 🧪 **Tests et Développement**
+
+### **Test de l'Authentification**
+
+1. **Démarrer l'application** :
+
+   ```bash
+   npm run dev
+   ```
+
+2. **Créer un utilisateur de test** (si nécessaire) :
+
+   ```bash
+   npm run create-user
+   ```
+
+3. **Tester l'authentification** :
+
+   ```bash
+   npm run test-auth
+   ```
+
+4. **Accéder à l'interface** :
+   - Ouvrez http://localhost:3000 (ou 3001)
+   - Connectez-vous avec `user@toto.com` / `password123`
+   - Explorez le dashboard
+
+### **Workflow de Test Complet**
+
+```bash
+# 1. Installation et configuration
+npm install
+cp env.example .env.local
+# Éditer .env.local avec vos clés Supabase
+
+# 2. Création d'un utilisateur de test
+npm run create-user
+
+# 3. Test de l'authentification
+npm run test-auth
+
+# 4. Démarrage de l'application
+npm run dev
+
+# 5. Test de l'interface utilisateur
+# Ouvrir http://localhost:3000 et se connecter
+```
+
+### **Dépannage**
+
+#### **Erreurs Courantes**
+
+- **"Variables d'environnement manquantes"** → Vérifiez votre fichier `.env.local`
+- **"Utilisateur déjà existant"** → Utilisez `npm run update-user` au lieu de `create-user`
+- **"Erreur de connexion"** → Vérifiez vos clés Supabase dans `.env.local`
+
+#### **Vérification de la Configuration**
+
+```bash
+# Vérifier que les variables sont chargées
+echo $NEXT_PUBLIC_SUPABASE_URL
+echo $NEXT_PUBLIC_SUPABASE_ANON_KEY
 ```
 
 ## 📁 **Structure du Projet**
@@ -210,7 +325,6 @@ src/
 │   └── layout/        # Layouts
 ├── lib/               # Utilitaires et configuration
 │   ├── supabase/      # Configuration Supabase
-│   ├── clerk/         # Configuration Clerk
 │   ├── utils/         # Fonctions utilitaires
 │   └── data/          # Données mockées
 └── types/             # Types TypeScript
@@ -234,6 +348,6 @@ Pour toute question ou support, contactez l'équipe technique du CSE Les PEP 973
 
 ---
 
-**Dernière mise à jour :** 26 Janvier 2025  
-**Version :** 2.1  
+**Dernière mise à jour :** 27 Janvier 2025  
+**Version :** 2.2  
 **Statut :** Phase 1 - Développement actif 🚀

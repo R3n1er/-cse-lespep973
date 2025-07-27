@@ -1,7 +1,7 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
+import { getCurrentUser } from "@/lib/supabase/auth";
 import {
   Card,
   CardContent,
@@ -53,7 +53,7 @@ interface UserProfile {
 }
 
 export default function ProfilePage() {
-  const { user, isLoaded } = useUser();
+  const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
@@ -65,20 +65,25 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    if (isLoaded && user) {
-      fetchProfile();
-    }
-  }, [isLoaded, user]);
+    const loadUser = async () => {
+      const { user: currentUser } = await getCurrentUser();
+      setUser(currentUser);
+      if (currentUser) {
+        fetchProfile(currentUser);
+      }
+    };
+    loadUser();
+  }, []);
 
-  const fetchProfile = async () => {
-    if (!user) return;
+  const fetchProfile = async (currentUser: any) => {
+    if (!currentUser) return;
 
     try {
       setLoading(true);
       const { data, error } = await supabase
         .from("users")
         .select("*")
-        .eq("id", user.id)
+        .eq("id", currentUser.id)
         .single();
 
       if (error) {
@@ -86,12 +91,29 @@ export default function ProfilePage() {
         return;
       }
 
-      setProfile(data);
+      // Adapter les données au format UserProfile
+      const profileData: UserProfile = {
+        id: data.id,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        email: data.email,
+        matricule: data.matricule,
+        role: data.role,
+        phone: data.phone,
+        personal_email: (data as any).personal_email || null,
+        children_count: (data as any).children_count || null,
+        children_birth_dates: (data as any).children_birth_dates || null,
+        address: data.address,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+      };
+
+      setProfile(profileData);
       setFormData({
         phone: data.phone || "",
-        personal_email: data.personal_email || "",
-        children_count: data.children_count || 0,
-        children_birth_dates: data.children_birth_dates || [],
+        personal_email: (data as any).personal_email || "",
+        children_count: (data as any).children_count || 0,
+        children_birth_dates: (data as any).children_birth_dates || [],
       });
     } catch (error) {
       console.error("Erreur inattendue:", error);
@@ -125,7 +147,9 @@ export default function ProfilePage() {
 
       toast.success("Profil mis à jour avec succès");
       setEditing(false);
-      fetchProfile();
+      if (user) {
+        fetchProfile(user);
+      }
     } catch (error) {
       toast.error("Erreur inattendue");
       console.error("Erreur:", error);
@@ -176,7 +200,7 @@ export default function ProfilePage() {
     });
   };
 
-  if (!isLoaded || loading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center space-y-4">
@@ -349,7 +373,7 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <Label htmlFor="children_count">Nombre d'enfants</Label>
+                <Label htmlFor="children_count">Nombre d&apos;enfants</Label>
                 <Input
                   id="children_count"
                   type="number"

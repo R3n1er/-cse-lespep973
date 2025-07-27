@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ThumbsUp } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
 import { supabase } from "@/lib/supabase/config";
 import { toast } from "sonner";
+import { getCurrentUser } from "@/lib/supabase/auth";
 
 interface ReactionButtonProps {
   postId: string;
@@ -18,10 +18,19 @@ export default function ReactionButton({
   initialCount = 0,
   initialUserReaction = false,
 }: ReactionButtonProps) {
-  const { user } = useUser();
+  const [user, setUser] = useState<any>(null);
   const [count, setCount] = useState(initialCount);
   const [userReaction, setUserReaction] = useState(initialUserReaction);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Charger l'utilisateur connecté
+  useEffect(() => {
+    const loadUser = async () => {
+      const { user: currentUser } = await getCurrentUser();
+      setUser(currentUser);
+    };
+    loadUser();
+  }, []);
 
   // Charger l'état initial des réactions
   useEffect(() => {
@@ -40,7 +49,7 @@ export default function ReactionButton({
         const { data: userData } = await supabase
           .from("users")
           .select("id")
-          .eq("email", user.emailAddresses[0].emailAddress)
+          .eq("email", user.email)
           .single();
 
         if (userData) {
@@ -77,7 +86,7 @@ export default function ReactionButton({
       const { data: userData, error: userError } = await supabase
         .from("users")
         .select("id")
-        .eq("email", user.emailAddresses[0].emailAddress)
+        .eq("email", user.email)
         .single();
 
       if (userError || !userData) {

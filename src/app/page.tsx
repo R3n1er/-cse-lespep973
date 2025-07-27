@@ -1,7 +1,7 @@
 "use client";
 
-import { SignIn } from "@clerk/nextjs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import LoginForm from "@/components/auth/LoginForm";
 import {
   Shield,
   Building2,
@@ -82,7 +82,9 @@ export default function Home() {
                       <p className="font-semibold text-gray-900">
                         Remboursements
                       </p>
-                      <p className="text-sm text-gray-600">Jusqu'à 200€/an</p>
+                      <p className="text-sm text-gray-600">
+                        Jusqu&apos;à 200€/an
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -139,7 +141,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Colonne de droite - Connexion Clerk */}
+            {/* Colonne de droite - Connexion Supabase */}
             <div className="flex justify-center lg:justify-end">
               <div className="w-full max-w-md">
                 <Card className="bg-white/80 backdrop-blur-md border-0 shadow-2xl shadow-blue-500/10">
@@ -158,33 +160,8 @@ export default function Home() {
                   </CardHeader>
 
                   <CardContent className="px-6 pb-8">
-                    {/* Composant SignIn de Clerk intégré directement */}
                     <div className="space-y-6">
-                      <SignIn
-                        appearance={{
-                          elements: {
-                            formButtonPrimary:
-                              "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl",
-                            card: "shadow-none bg-transparent border-0",
-                            headerTitle: "hidden",
-                            headerSubtitle: "hidden",
-                            socialButtonsBlockButton:
-                              "border-2 border-gray-200 hover:border-gray-300 rounded-xl py-3 px-4 transition-all duration-300 hover:shadow-md",
-                            formFieldInput:
-                              "border-2 border-gray-200 rounded-xl py-3 px-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300",
-                            footerActionLink:
-                              "text-blue-600 hover:text-blue-700 font-medium",
-                            identityPreviewEditButton:
-                              "text-blue-600 hover:text-blue-700",
-                            formResendCodeLink:
-                              "text-blue-600 hover:text-blue-700",
-                          },
-                        }}
-                        routing="hash"
-                        signUpUrl="/auth/register"
-                        forceRedirectUrl="/dashboard"
-                        fallbackRedirectUrl="/dashboard"
-                      />
+                      <LoginForm />
 
                       {/* Informations supplémentaires */}
                       <div className="pt-4 border-t border-gray-100">
@@ -196,8 +173,23 @@ export default function Home() {
                             </span>
                           </div>
                           <p className="text-xs text-gray-500">
-                            Nouveau collaborateur ? Contactez nous pour obtenir
-                            vos accès
+                            Nouveau collaborateur ?{" "}
+                            <a
+                              href="/contact"
+                              className="text-blue-600 hover:text-blue-700 underline"
+                            >
+                              Contactez-nous
+                            </a>{" "}
+                            pour obtenir vos accès
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Pas encore de compte ?{" "}
+                            <a
+                              href="/auth/register"
+                              className="text-blue-600 hover:text-blue-700 underline"
+                            >
+                              S&apos;inscrire
+                            </a>
                           </p>
                         </div>
                       </div>

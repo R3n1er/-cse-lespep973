@@ -7,9 +7,9 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useUser } from "@clerk/nextjs";
 import { supabase } from "@/lib/supabase/config";
 import { toast } from "sonner";
+import { getCurrentUser } from "@/lib/supabase/auth";
 
 const commentSchema = z.object({
   content: z
@@ -33,8 +33,17 @@ export default function CommentForm({
   onCommentAdded,
   onCancel,
 }: CommentFormProps) {
-  const { user } = useUser();
+  const [user, setUser] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Charger l'utilisateur connecté
+  useState(() => {
+    const loadUser = async () => {
+      const { user: currentUser } = await getCurrentUser();
+      setUser(currentUser);
+    };
+    loadUser();
+  });
 
   const {
     register,
@@ -58,7 +67,7 @@ export default function CommentForm({
       const { data: userData, error: userError } = await supabase
         .from("users")
         .select("id")
-        .eq("email", user.emailAddresses[0].emailAddress)
+        .eq("email", user.email)
         .single();
 
       if (userError || !userData) {

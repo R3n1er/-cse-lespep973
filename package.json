@@ -9,10 +9,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "create-user": "tsx scripts/create-user.ts",
+    "update-user": "tsx scripts/update-user-password.ts",
+    "test-auth": "tsx scripts/test-auth.ts",
+    "test-app": "tsx scripts/test-application.ts",
+    "update-todo": "tsx scripts/update-todo.ts"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.27.0",
     "@hookform/resolvers": "^5.2.0",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-label": "^2.1.7",
@@ -50,6 +54,8 @@
     "zod": "^4.0.10"
   },
   "devDependencies": {
-    "@shadcn/ui": "^0.0.4"
+    "@shadcn/ui": "^0.0.4",
+    "dotenv": "^16.4.7",
+    "tsx": "^4.19.2"
   }
 }

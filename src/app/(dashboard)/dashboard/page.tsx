@@ -1,7 +1,7 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
+import { getCurrentUser } from "@/lib/supabase/auth";
 import {
   Card,
   CardContent,
@@ -49,7 +49,7 @@ interface RecentActivity {
 }
 
 export default function DashboardPage() {
-  const { user, isLoaded } = useUser();
+  const [user, setUser] = useState<any>(null);
   const [userStats, setUserStats] = useState<UserStats>({
     totalTickets: 0,
     totalReimbursements: 0,
@@ -64,13 +64,18 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (isLoaded && user) {
-      fetchUserData();
-    }
-  }, [isLoaded, user]);
+    const loadUser = async () => {
+      const { user: currentUser } = await getCurrentUser();
+      setUser(currentUser);
+      if (currentUser) {
+        fetchUserData(currentUser);
+      }
+    };
+    loadUser();
+  }, []);
 
-  const fetchUserData = async () => {
-    if (!user) return;
+  const fetchUserData = async (currentUser: any) => {
+    if (!currentUser) return;
 
     try {
       setLoading(true);
@@ -79,20 +84,20 @@ export default function DashboardPage() {
       const { data: userData } = await supabase
         .from("users")
         .select("*")
-        .eq("id", user.id)
+        .eq("id", currentUser.id)
         .single();
 
       // Récupérer les commentaires de l'utilisateur
       const { data: comments } = await supabase
         .from("blog_comments")
         .select("*")
-        .eq("user_id", user.id);
+        .eq("user_id", currentUser.id);
 
       // Récupérer les réactions de l'utilisateur
       const { data: reactions } = await supabase
         .from("blog_reactions")
         .select("*")
-        .eq("user_id", user.id);
+        .eq("user_id", currentUser.id);
 
       // Mettre à jour les statistiques
       setUserStats({
@@ -178,7 +183,7 @@ export default function DashboardPage() {
     }
   };
 
-  if (!isLoaded || loading) {
+  if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center min-h-[400px]">
@@ -211,7 +216,7 @@ export default function DashboardPage() {
           Tableau de bord
         </h1>
         <p className="text-gray-600">
-          Bienvenue, {user.firstName || user.emailAddresses[0]?.emailAddress}
+          Bienvenue, {user.user_metadata?.first_name || user.email}
         </p>
       </div>
 

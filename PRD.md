@@ -1,12 +1,12 @@
 # Document des Exigences Produit (PRD)
 
-# CSE Les PEP 973 - Application Web de Gestion
+# CSE LES PEP 973 - Application Portail Web de Gestion
 
-**Version:** 2.1  
-**Date:** 26 Janvier 2025  
+**Version:** 2.2  
+**Date:** 27 Janvier 2025  
 **Auteur:** Équipe Technique CSE Les PEP 973
 
-**Mise à jour :** Ajout de la stratégie d'architecture hybride Supabase + Neon pour les analytics futurs
+**Mise à jour :** Migration de Clerk vers Supabase Auth + Ajout des scripts d'authentification et de test
 
 ## Table des matières
 
@@ -68,7 +68,31 @@ L'application CSE Les PEP 973 suit une **stratégie d'architecture évolutive** 
 | **Performance**     | Bonne     | Excellente   | Performance maximale               |
 | **Fonctionnalités** | Complètes | Spécialisées | Écosystème complet + Analytics     |
 
-### 0.3 Critères de Passage à la Phase 4
+### 0.3 Migration Authentification - Clerk → Supabase
+
+**Raison de la migration :**
+
+- Simplification de l'architecture technique
+- Réduction des dépendances externes
+- Meilleure intégration avec l'écosystème Supabase
+- Contrôle total sur l'expérience utilisateur
+
+**Avantages de Supabase Auth :**
+
+- Authentification native avec JWT
+- Gestion des rôles intégrée
+- Politiques RLS (Row Level Security)
+- Interface personnalisable
+- Pas de dépendance tierce
+
+**Outils de développement créés :**
+
+- Scripts automatisés pour la création d'utilisateurs
+- Tests d'authentification automatisés
+- Workflow de développement standardisé
+- Documentation complète des processus
+
+### 0.4 Critères de Passage à la Phase 4
 
 - 500+ utilisateurs actifs
 - Besoin de rapports complexes
@@ -446,7 +470,7 @@ erDiagram
 
 ### 4.3 Sécurité et Contrôle d'Accès
 
-- **Authentification:** JWT avec expiration courte et refresh tokens
+- **Authentification:** Supabase Auth avec JWT et refresh tokens
 - **Autorisation:** Row Level Security (RLS) au niveau base de données
 - **Rôles:** Système de permissions basé sur les rôles (RBAC)
 - **Protection des données:** Chiffrement en transit (HTTPS) et au repos
@@ -553,7 +577,7 @@ ORDER BY total_approved DESC;
 - Besoin de rapports complexes
 - Optimisation des coûts nécessaire
 - Performance des requêtes critique
-- **Authentification:** Clerk
+- **Authentification:** Supabase Auth
 - **Paiements:** Stripe
 
 ---
@@ -1075,7 +1099,75 @@ Sync Service → Synchronisation automatique Supabase ↔ Neon
 | **Accessibilité**        | WCAG 2.1 AA | ✅          |
 | **SEO**                  | Optimisé    | ✅          |
 
-### 14.6 Prochaines Étapes Prioritaires
+### 14.6 Scripts de Développement et Tests
+
+#### **Scripts d'Authentification et Utilisateurs**
+
+```bash
+# Créer un nouvel utilisateur via API Supabase
+npm run create-user
+
+# Mettre à jour le mot de passe d'un utilisateur existant
+npm run update-user
+
+# Tester l'authentification avec un utilisateur
+npm run test-auth
+```
+
+#### **Utilisation des Scripts**
+
+**Créer un Utilisateur de Test :**
+
+```bash
+npm run create-user
+# Crée : user@toto.com / password123 / rôle: salarie
+```
+
+**Mettre à Jour un Utilisateur Existant :**
+
+```bash
+npm run update-user
+# Utile si l'utilisateur existe déjà dans Supabase
+# mais n'a pas de mot de passe configuré
+```
+
+**Tester l'Authentification :**
+
+```bash
+npm run test-auth
+# Vérifie : connexion, récupération utilisateur, accès table users, déconnexion
+```
+
+#### **Identifiants de Test par Défaut**
+
+```bash
+Email: user@toto.com
+Mot de passe: password123
+Rôle: salarie
+```
+
+#### **Workflow de Test Complet**
+
+```bash
+# 1. Installation et configuration
+npm install
+cp env.example .env.local
+# Éditer .env.local avec vos clés Supabase
+
+# 2. Création d'un utilisateur de test
+npm run create-user
+
+# 3. Test de l'authentification
+npm run test-auth
+
+# 4. Démarrage de l'application
+npm run dev
+
+# 5. Test de l'interface utilisateur
+# Ouvrir http://localhost:3000 et se connecter
+```
+
+### 14.7 Prochaines Étapes Prioritaires
 
 1. **Finaliser les migrations Supabase** et résoudre les erreurs TypeScript
 2. **Implémenter le dashboard utilisateur** avec profil et historique
@@ -1085,13 +1177,37 @@ Sync Service → Synchronisation automatique Supabase ↔ Neon
 6. **Mettre en place l'administration** et l'import Excel
 7. **Déployer en production** avec monitoring complet
 
-### 14.7 Défis Techniques Résolus
+### 14.8 Outils de Développement et Tests
+
+#### **Scripts Automatisés**
+
+- ✅ **Création d'utilisateurs** : Script automatisé via API Supabase
+- ✅ **Tests d'authentification** : Validation complète du workflow de connexion
+- ✅ **Mise à jour d'utilisateurs** : Gestion des mots de passe et profils
+- ✅ **Workflow de test** : Processus automatisé de validation
+
+#### **Environnement de Développement**
+
+- ✅ **Variables d'environnement** : Configuration centralisée (.env.local)
+- ✅ **Scripts npm** : Commandes standardisées pour le développement
+- ✅ **Tests automatisés** : Validation des fonctionnalités critiques
+- ✅ **Documentation** : Guides détaillés pour les développeurs
+
+#### **Dépannage et Support**
+
+- ✅ **Logs détaillés** : Messages d'erreur informatifs
+- ✅ **Validation de configuration** : Vérification des variables d'environnement
+- ✅ **Gestion d'erreurs** : Solutions pour les problèmes courants
+- ✅ **Workflow de test** : Processus étape par étape
+
+### 14.9 Défis Techniques Résolus
 
 - ✅ **Architecture modulaire** : Composants réutilisables et maintenables
 - ✅ **Performance** : Optimisation Next.js 15 et chargement lazy
 - ✅ **Sécurité** : Authentification robuste et protection des données
 - ✅ **Expérience utilisateur** : Interface moderne et intuitive
 - ✅ **Scalabilité** : Infrastructure Supabase + Vercel
+- ✅ **Outils de développement** : Scripts automatisés et tests
 
 ---
 
