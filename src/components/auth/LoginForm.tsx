@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn } from "@/lib/supabase/auth";
+import { supabase } from "@/lib/supabase/config";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -25,14 +27,61 @@ export default function LoginForm() {
 
     if (error) {
       console.error("❌ Erreur de connexion:", error);
-      setError(error.message);
+
+      // Gestion des erreurs avec notifications toast
+      let errorMessage = "Erreur de connexion";
+
+      if (error.message.includes("Invalid login credentials")) {
+        errorMessage = "Email ou mot de passe incorrect";
+        toast.error("❌ Email ou mot de passe incorrect", {
+          description: "Vérifiez vos identifiants et réessayez.",
+          duration: 5000,
+        });
+      } else if (error.message.includes("Email not confirmed")) {
+        errorMessage = "Email non confirmé";
+        toast.error("❌ Email non confirmé", {
+          description:
+            "Veuillez confirmer votre adresse email avant de vous connecter.",
+          duration: 5000,
+        });
+      } else if (error.message.includes("Too many requests")) {
+        errorMessage = "Trop de tentatives";
+        toast.error("❌ Trop de tentatives de connexion", {
+          description: "Veuillez attendre quelques minutes avant de réessayer.",
+          duration: 5000,
+        });
+      } else {
+        toast.error("❌ Erreur de connexion", {
+          description: error.message,
+          duration: 5000,
+        });
+      }
+
+      setError(errorMessage);
     } else if (data.user) {
       console.log("✅ Connexion réussie:", data.user.email);
+
+      // Notification de succès
+      toast.success("✅ Connexion réussie", {
+        description: `Bienvenue, ${data.user.email}`,
+        duration: 3000,
+      });
+
       console.log("🔄 Redirection vers /dashboard...");
-      router.push("/dashboard");
+
+      // Redirection immédiate après connexion réussie
+      setTimeout(() => {
+        console.log("🔄 Redirection immédiate...");
+        window.location.href = "/dashboard";
+      }, 1000);
     } else {
       console.log("⚠️ Pas d'erreur mais pas d'utilisateur");
       setError("Erreur inattendue lors de la connexion");
+      toast.error("❌ Erreur inattendue", {
+        description:
+          "Une erreur inattendue s'est produite. Veuillez réessayer.",
+        duration: 5000,
+      });
     }
 
     setLoading(false);

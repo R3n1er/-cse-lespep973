@@ -22,10 +22,10 @@ import { getCurrentUser, signOut } from "@/lib/supabase/auth";
 
 const navigation = [
   { name: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Blog & Actualités", href: "/dashboard/blog", icon: MessageSquare },
   { name: "Tickets Cinéma", href: "/dashboard/tickets", icon: Ticket },
   { name: "Mon Profil", href: "/dashboard/profile", icon: User },
-  { name: "Blog & Actualités", href: "/blog", icon: MessageSquare },
-  { name: "Newsletter", href: "/newsletter", icon: Bell },
+  { name: "Newsletter", href: "/dashboard/newsletter", icon: Bell },
 ];
 
 export default function DashboardLayout({

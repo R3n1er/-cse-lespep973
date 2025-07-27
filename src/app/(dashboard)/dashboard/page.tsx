@@ -209,10 +209,10 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="px-4 py-8 sm:px-6 lg:px-8">
       {/* En-tête du Dashboard */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
           Tableau de bord
         </h1>
         <p className="text-gray-600">
@@ -220,11 +220,11 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
         {/* Colonne principale */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="xl:col-span-2 space-y-6">
           {/* Statistiques */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="hover:shadow-md transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Tickets</CardTitle>
@@ -337,7 +337,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Colonne latérale */}
-        <div className="space-y-6">
+        <div className="xl:col-span-1 space-y-6">
           {/* Profil utilisateur */}
           <Card>
             <CardHeader>
@@ -350,22 +350,21 @@ export default function DashboardPage() {
               <div className="flex items-center gap-4">
                 <Avatar className="w-16 h-16">
                   <AvatarImage
-                    src={user.imageUrl}
-                    alt={user.firstName || "Utilisateur"}
+                    src={user.user_metadata?.avatar_url}
+                    alt={user.user_metadata?.first_name || "Utilisateur"}
                   />
                   <AvatarFallback>
-                    {user.firstName?.charAt(0) ||
-                      user.emailAddresses[0]?.emailAddress?.charAt(0) ||
+                    {user.user_metadata?.first_name?.charAt(0) ||
+                      user.email?.charAt(0) ||
                       "U"}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <h3 className="font-semibold">
-                    {user.firstName} {user.lastName}
+                    {user.user_metadata?.first_name}{" "}
+                    {user.user_metadata?.last_name}
                   </h3>
-                  <p className="text-sm text-gray-500">
-                    {user.emailAddresses[0]?.emailAddress}
-                  </p>
+                  <p className="text-sm text-gray-500">{user.email}</p>
                   <Badge variant="outline" className="mt-1">
                     Salarié
                   </Badge>
@@ -386,7 +385,7 @@ export default function DashboardPage() {
               </div>
 
               <div className="pt-4 border-t">
-                <Link href="/profile">
+                <Link href="/dashboard/profile">
                   <Button variant="outline" className="w-full">
                     <Settings className="w-4 h-4 mr-2" />
                     Modifier le profil
@@ -405,25 +404,25 @@ export default function DashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Link href="/tickets">
+              <Link href="/dashboard/tickets">
                 <Button variant="outline" className="w-full justify-start">
                   <Ticket className="w-4 h-4 mr-2" />
                   Acheter des tickets
                 </Button>
               </Link>
-              <Link href="/remboursements">
+              <Link href="/dashboard/remboursements">
                 <Button variant="outline" className="w-full justify-start">
                   <Euro className="w-4 h-4 mr-2" />
                   Demander un remboursement
                 </Button>
               </Link>
-              <Link href="/blog">
+              <Link href="/dashboard/blog">
                 <Button variant="outline" className="w-full justify-start">
                   <MessageSquare className="w-4 h-4 mr-2" />
                   Voir le blog
                 </Button>
               </Link>
-              <Link href="/newsletter">
+              <Link href="/dashboard/newsletter">
                 <Button variant="outline" className="w-full justify-start">
                   <Bell className="w-4 h-4 mr-2" />
                   Gérer la newsletter

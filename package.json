@@ -12,9 +12,16 @@
     "lint": "next lint",
     "create-user": "tsx scripts/create-user.ts",
     "update-user": "tsx scripts/update-user-password.ts",
-    "test-auth": "tsx scripts/test-auth.ts",
-    "test-app": "tsx scripts/test-application.ts",
-    "update-todo": "tsx scripts/update-todo.ts"
+    "test-auth": "tsx scripts/tests/test-auth.ts",
+    "test-app": "tsx scripts/tests/test-application.ts",
+    "update-todo": "tsx scripts/update-todo.ts",
+    "fix-rls": "tsx scripts/apply-rls-fix.ts",
+    "diagnose-rls": "tsx scripts/diagnose-rls.ts",
+    "test-rls-fix": "tsx scripts/tests/test-rls-fix.ts",
+    "test-ui-flow": "tsx scripts/tests/test-ui-flow.ts",
+    "test-redirect": "tsx scripts/tests/test-redirect.ts",
+    "clear-cookies": "tsx scripts/tests/clear-clerk-cookies.ts",
+    "test-all": "tsx scripts/tests/run-all-tests.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.0",

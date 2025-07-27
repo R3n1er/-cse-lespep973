@@ -23,19 +23,74 @@ export async function middleware(req: NextRequest) {
     }
   );
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  // Vérifier les cookies de session Supabase (noms corrects)
+  const supabaseCookies = req.cookies
+    .getAll()
+    .filter(
+      (cookie) =>
+        cookie.name.startsWith("sb-") ||
+        cookie.name.includes("supabase") ||
+        cookie.name.includes("auth")
+    );
 
-  // Protection des routes dashboard
-  if (req.nextUrl.pathname.startsWith("/dashboard") && !session) {
-    console.log("🔒 Accès refusé au dashboard - Pas de session");
-    return NextResponse.redirect(new URL("/", req.url));
+  console.log(
+    "🔍 Middleware - Cookies Supabase:",
+    supabaseCookies.map((c) => c.name)
+  );
+
+  // Vérifier les cookies spécifiques Supabase
+  const accessToken = req.cookies.get(
+    "sb-uonrqbxplvlfuqblpwnf-auth-token"
+  )?.value;
+  const refreshToken = req.cookies.get(
+    "sb-uonrqbxplvlfuqblpwnf-auth-refresh-token"
+  )?.value;
+
+  console.log("🔍 Middleware - Access Token:", !!accessToken);
+  console.log("🔍 Middleware - Refresh Token:", !!refreshToken);
+
+  // Essayer de récupérer la session
+  let session = null;
+  try {
+    const {
+      data: { session: sessionData },
+    } = await supabase.auth.getSession();
+    session = sessionData;
+  } catch (error) {
+    console.log("🔍 Middleware - Erreur session:", error);
+  }
+
+  console.log("🔍 Middleware - URL:", req.nextUrl.pathname);
+  console.log("🔍 Middleware - Session:", !!session);
+  console.log(
+    "🔍 Middleware - Cookies:",
+    req.cookies.getAll().map((c) => c.name)
+  );
+  if (session) {
+    console.log("🔍 Middleware - User:", session.user.email);
+  }
+
+  // Protection des routes dashboard basée sur les cookies
+  if (req.nextUrl.pathname.startsWith("/dashboard")) {
+    const hasValidSession = session || accessToken;
+
+    if (!hasValidSession) {
+      console.log("🔒 Accès refusé au dashboard - Pas de session valide");
+      console.log("   URL demandée:", req.nextUrl.pathname);
+      console.log("   Session:", !!session);
+      console.log("   Access Token:", !!accessToken);
+      console.log("   ⚠️ Cookies Clerk détectés - Nettoyage nécessaire");
+
+      return NextResponse.redirect(new URL("/", req.url));
+    } else {
+      console.log("✅ Accès autorisé au dashboard");
+    }
   }
 
   // Redirection si déjà connecté et sur la page d'accueil
   if (req.nextUrl.pathname === "/" && session) {
     console.log("✅ Utilisateur connecté, redirection vers dashboard");
+    console.log("   Session user:", session.user.email);
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 

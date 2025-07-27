@@ -195,6 +195,7 @@ npm run lint         # Vérification du code
 npm run create-user  # Créer un nouvel utilisateur via API Supabase
 npm run update-user  # Mettre à jour le mot de passe d'un utilisateur existant
 npm run test-auth    # Tester l'authentification avec un utilisateur
+npm run test-all     # Exécuter tous les tests
 ```
 
 ### **Utilisation des Scripts d'Utilisateurs**
@@ -285,7 +286,10 @@ npm run create-user
 # 3. Test de l'authentification
 npm run test-auth
 
-# 4. Démarrage de l'application
+# 4. Test complet de l'application
+npm run test-all
+
+# 5. Démarrage de l'application
 npm run dev
 
 # 5. Test de l'interface utilisateur
