@@ -1,12 +1,33 @@
+---
+## 🆕 Changelog Janvier 2025
+
+### Version 2.4 (28 Janvier 2025) - Système Newsletter Automatique
+
+- **Newsletter Automatique** : Envoi automatique aux membres CSE actifs (suppression inscription manuelle)
+- **Interface Administration** : Dashboard complet `/admin` avec gestion utilisateurs et newsletter
+- **Mailgun Integration** : Template HTML professionnel avec tracking avancé (ouvertures, clics)
+- **Base de Données** : Tables `newsletter_logs`, `newsletter_recipients` avec fonctions SQL
+- **Sécurité Admin** : Politiques RLS et contrôle d'accès pour interface administration
+- **Analytics Détaillés** : Statistiques newsletter avec insights et recommandations
+
+### Version 2.3 (27 Janvier 2025) - Tests et Blog
+
+- Migration des tests automatisés vers **Vitest** (unitaires, intégration, UI)
+- Refactorisation des composants pour l'accessibilité et la robustesse
+- Documentation technique enrichie (README, PRD, scripts npm)
+- Automatisation du workflow de test (CI/CD, couverture, interface interactive)
+- Sécurisation des workflows critiques (auth, RLS, accès base)
+---
+
 # Document des Exigences Produit (PRD)
 
 # CSE LES PEP 973 - Application Portail Web de Gestion
 
-**Version:** 2.3  
-**Date:** 27 Janvier 2025  
+**Version:** 2.4  
+**Date:** 28 Janvier 2025  
 **Auteur:** Équipe Technique CSE Les PEP 973
 
-**Mise à jour :** Améliorations majeures du blog + Tests complets + Refactorisation senior
+**Mise à jour :** Système Newsletter Automatique + Interface Administration Complète
 
 ## Table des matières
 
@@ -257,7 +278,6 @@ L'application web du CSE de l'association LES PEP GUYANE vise à moderniser et c
 - **Inscription** : Seuls les utilisateurs préalablement injectés via un fichier Excel transmis par le service RH peuvent activer leur compte directement. L’inscription libre est désactivée.
 - **Demande d’accès** : Un utilisateur non injecté peut faire une demande d’accès en renseignant : nom, prénom, email personnel, établissement d’affectation (liste déroulante des établissements ADPEP GUYANE). Cette demande notifie les administrateurs pour validation manuelle.
 - **Restriction de domaine** : L’authentification avec un email du domaine `lepep973.org` est interdite (sauf pour les administrateurs). Seuls les emails personnels (Gmail, Hotmail, etc.) sont autorisés pour l’authentification standard.
-- **Double authentification (2FA)** : La double authentification est obligatoire pour tous les utilisateurs via Clerk.
 - **Gestion des établissements** : La liste des établissements ADPEP GUYANE est proposée dans le formulaire de demande d’accès.
 
 #### 3.1.2 Gestion des Profils
@@ -387,7 +407,7 @@ L'application web du CSE de l'association LES PEP GUYANE vise à moderniser et c
 
 - **Infrastructure:** Supabase
 - **Base de données:** PostgreSQL
-- **Authentification:** Clerk
+- **Authentification:** Supabase
 - **Stockage:** Supabase Storage pour les fichiers
 - **Stockage des images:** Unpic IMG, Imgur, Aws S3
 - **API:** REST via Supabase et API Routes Next.js
@@ -481,35 +501,23 @@ erDiagram
 - **Email:** Mailgun pour les notifications
 - **Stockage:** Supabase Storage et AWS S3 pour les pièces justificatives
 
-### 4.5 Architecture Hybride Future (Phase 3) 🚀
+## 4.5 Tests (optimisé)
 
-#### 4.5.1 Stratégie d'Évolution
+Les tests unitaires et d'intégration sont réalisés avec **Vitest** (remplaçant progressivement les scripts CLI historiques).
 
-L'application évoluera vers une **architecture hybride Supabase + Neon** pour optimiser les performances et les coûts :
-
-```mermaid
-graph TB
-    subgraph "Phase 1 - Actuelle"
-        A[Next.js App] --> B[Supabase]
-        B --> C[PostgreSQL + Auth + Storage]
-    end
-
-    subgraph "Phase 2 - Développement"
-        A --> B
-        A --> D[Neon Analytics]
-        B --> C
-        D --> E[PostgreSQL Serverless]
-    end
-
-    subgraph "Phase 3 - Production"
-        A --> B
-        A --> D
-        B --> C
-        D --> E
-        F[Sync Service] --> B
-        F --> D
-    end
-```
+- **Stack de test** : Vitest + Testing Library + jest-dom + user-event
+- **Types de tests** :
+  - Unitaires (fonctions, hooks, logique métier)
+  - Intégration (auth, RLS, accès base, workflow utilisateur)
+  - UI (composants React, accessibilité, interactions)
+- **Scripts npm** :
+  - `npm test` : tous les tests en mode CI
+  - `npm run test:ui` : interface interactive pour le développement
+  - `npm run test:coverage` : rapport de couverture
+- **Organisation** :
+  - Tous les nouveaux tests sont dans `src/__tests__/` ou à côté des composants (`__tests__`)
+  - Migration progressive des anciens scripts du dossier `scripts/tests/`
+- **Objectif** : Couverture > 80% du code, fiabilité CI/CD, onboarding facilité
 
 #### 4.5.2 Répartition des Responsabilités
 
@@ -1030,7 +1038,7 @@ flowchart TD
 ```typescript
 Frontend: Next.js 15 + TypeScript + Tailwind CSS + shadcn/ui
 Backend: Supabase (PostgreSQL + Auth + Storage + Edge Functions)
-Auth: Clerk + JWT + RLS
+Auth: Supabase
 Déploiement: Vercel + GitHub Actions
 Monitoring: Vercel Analytics + Sentry (prévu)
 ```

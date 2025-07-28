@@ -2,9 +2,9 @@
 
 ## 🎯 **Vue d'Ensemble du Projet**
 
-- **Version actuelle** : 2.3 (27 Janvier 2025)
-- **Statut** : 🚀 En développement (Blog amélioré avec tests complets)
-- **Prochaine étape** : Module Tickets Cinéma et intégration Supabase complète
+- **Version actuelle** : 2.4 (28 Janvier 2025)
+- **Statut** : 🚀 Système Newsletter Automatique Opérationnel
+- **Prochaine étape** : Déploiement Supabase et finalisation production
 
 ---
 
@@ -76,6 +76,22 @@
 - [x] **Tests de Composants** : Validation des props, URLs, catégories
 - [x] **Tests d'Authentification** : Connexion/déconnexion, gestion d'erreurs
 - [x] **Tests Complets** : 4 phases automatisées avec succès ✅
+
+### 📧 **Système Newsletter Automatique - NOUVEAU (28 Janvier 2025)**
+
+- [x] **STATUT** : ✅ COMPLÈTEMENT OPÉRATIONNEL
+- [x] **Logique Repensée** : Suppression newsletter utilisateur, envoi automatique aux membres CSE
+- [x] **Interface Admin** : Dashboard complet `/admin` avec thème rouge distinct
+- [x] **Gestion Utilisateurs** : Activation/désactivation, ajout membres CSE
+- [x] **Composer Newsletter** : Interface `/admin/newsletter` avec aperçu HTML
+- [x] **Envoi Automatique** : Récupération auto des utilisateurs actifs
+- [x] **Intégration Mailgun** : Template HTML professionnel, tracking complet
+- [x] **Base de Données** : Tables `newsletter_logs`, `newsletter_recipients`
+- [x] **Fonctions SQL** : `get_active_users()`, `get_newsletter_stats()`
+- [x] **API Robuste** : Fallback si fonctions SQL indisponibles
+- [x] **Analytics** : Statistiques détaillées `/admin/stats` avec insights
+- [x] **Sécurité** : Politiques RLS pour accès admin uniquement
+- [x] **Documentation** : Guide migration manuelle `/scripts/INSTRUCTIONS_MIGRATION_MANUELLE.md`
 
 ---
 
@@ -205,15 +221,18 @@
 
 #### 7.1 Interface d'Administration
 
-- [ ] **STATUT** : ❌ À développer
-- [ ] Dashboard administrateur
-- [ ] Gestion des utilisateurs
-- [ ] Import Excel des employés
-- [ ] Rapports et statistiques
+- [x] **STATUT** : ✅ OPÉRATIONNEL (Newsletter et Utilisateurs)
+- [x] Dashboard administrateur `/admin` avec thème rouge
+- [x] Gestion des utilisateurs avec activation/désactivation
+- [x] Interface newsletter avec composer et aperçu
+- [x] Statistiques et analytics détaillés
+- [ ] Import Excel des employés (à venir)
+- [x] Rapports et statistiques de newsletter
 
 #### 7.2 Analytics Avancés
 
 - [ ] **STATUT** : ❌ Planifié
+- [ ] Intégration Vercel Analytics (recommandé)
 - [ ] Intégration Neon pour les analytics
 - [ ] Tableaux de bord avancés
 - [ ] Métriques de performance
@@ -390,7 +409,33 @@ npx supabase db reset
 - [ ] Module Newsletter
 - [ ] Préparation au déploiement
 
+### **Semaine 4** (Dans 3 semaines)
+
+- [ ] Intégration Vercel Analytics
+- [ ] Optimisation des performances
+- [ ] Tests d'intégration finaux
+
 ---
 
 **Dernière mise à jour** : 27 Janvier 2025  
 **Prochaine révision** : 3 Février 2025
+
+---
+
+## 🆕 Changelog Janvier 2025
+
+- Migration des tests automatisés vers **Vitest** (unitaires, intégration, UI)
+- Refactorisation des composants pour l’accessibilité et la robustesse
+- Automatisation du workflow de test (CI/CD, couverture, interface interactive)
+- Documentation technique enrichie (README, PRD, scripts npm)
+
+---
+
+## Tâches prioritaires
+
+- [ ] Finaliser la migration de tous les scripts CLI (`scripts/tests/`) en tests unitaires Vitest (`src/__tests__/`)
+- [ ] Atteindre >80% de couverture de code avec Vitest
+- [ ] Mettre à jour la documentation développeur (README, PRD)
+- [ ] Continuer l'amélioration de l'accessibilité (aria-label, WCAG)
+- [ ] Automatiser les tests dans la CI/CD
+- [ ] Suivi de la migration dans le Sprint-log

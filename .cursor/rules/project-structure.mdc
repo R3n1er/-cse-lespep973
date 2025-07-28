@@ -1,0 +1,67 @@
+# Structure du Projet CSE Les PEP 973
+
+## Architecture principale
+
+- **Framework** : Next.js 15 avec App Router
+- **Backend** : Supabase (Auth, PostgreSQL, Storage, Realtime)
+- **Frontend** : TypeScript, Tailwind CSS, DaisyUI, Shadcn/ui
+- **Tests** : Vitest (unitaires, intégration), Playwright (E2E)
+
+## Organisation des dossiers
+
+### `/src/app/` - Pages Next.js
+
+- `(auth)/` - Pages d'authentification
+- `(dashboard)/` - Pages du tableau de bord (blog, tickets, remboursements, etc.)
+- `(public)/` - Pages publiques
+- `blog/` - Pages du blog
+- `contact/`, `newsletter/` - Pages publiques
+
+### `/src/components/` - Composants React
+
+- `auth/` - Composants d'authentification
+- `blog/` - Composants du blog (BlogCard, CommentSection, etc.)
+- `ui/` - Composants UI réutilisables (button, card, input, etc.)
+- `tickets/` - Composants de gestion des tickets
+- `layout/` - Layouts (dashboard-layout, main-layout)
+
+### `/src/lib/` - Utilitaires et services
+
+- `supabase/` - Configuration et types Supabase
+- `services/` - Services métier (TicketService, etc.)
+- `data/` - Données mockées pour le développement
+- `hooks/` - Hooks React personnalisés
+- `utils/` - Fonctions utilitaires
+
+### `/src/__tests__/` - Tests Vitest
+
+- Tests unitaires et d'intégration migrés depuis `scripts/tests/`
+- `utils.ts` - Helpers de test (login, logout)
+- Tests organisés par fonctionnalité (auth, blog, rls, etc.)
+
+### `/scripts/` - Scripts utilitaires
+
+- `tests/` - Tests E2E Playwright (conservés séparément)
+- Scripts de seed, migration, diagnostic
+
+### `/supabase/` - Configuration Supabase
+
+- `migrations/` - Migrations SQL
+- Configuration RLS, fonctions, triggers
+
+## Tests et qualité
+
+- **Vitest** : Tests unitaires et d'intégration
+- **Playwright** : Tests E2E dans `scripts/tests/`
+- **Coverage** : Rapport de couverture avec `@vitest/coverage-v8`
+- **Scripts npm** : `test`, `test:ui`, `test:coverage`
+
+## Variables d'environnement
+
+- `.env.local` - Variables Supabase et configuration
+- Chargement automatique dans les tests via `src/__tests__/utils.ts`
+  description:
+  globs:
+  alwaysApply: false
+
+---

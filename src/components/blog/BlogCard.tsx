@@ -1,4 +1,4 @@
-"use client";
+import React from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -50,7 +50,9 @@ export default function BlogCard({ post, className = "" }: BlogCardProps) {
         {/* Image de couverture */}
         <div className="relative h-48 bg-gradient-to-br from-cse-primary/10 to-cse-secondary/10 flex items-center justify-center">
           <div className="text-6xl opacity-20">
-            {getCategoryIcon(post.category)}
+            <span aria-label={`Icône catégorie ${post.category}`}>
+              {getCategoryIcon(post.category)}
+            </span>
           </div>
           <div className="absolute top-3 left-3">
             <Badge

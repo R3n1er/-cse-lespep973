@@ -1,282 +1,334 @@
-import React, { useState } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  LayoutDashboard,
+  User,
+  Ticket,
+  Euro,
+  MessageSquare,
+  Bell,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  Shield,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { getCurrentUser, signOut } from "@/lib/supabase/auth";
+import AuthGuard from "@/components/auth/AuthGuard";
 
-interface DashboardLayoutProps {
+const navigation = [
+  {
+    name: "Tableau de bord",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+    color: "text-blue-600",
+    bgColor: "bg-blue-50 hover:bg-blue-100",
+  },
+  {
+    name: "Blog & Actualités",
+    href: "/blog",
+    icon: MessageSquare,
+    color: "text-purple-600",
+    bgColor: "bg-purple-50 hover:bg-purple-100",
+  },
+  {
+    name: "Tickets Cinéma",
+    href: "/tickets",
+    icon: Ticket,
+    color: "text-emerald-600",
+    bgColor: "bg-emerald-50 hover:bg-emerald-100",
+  },
+  {
+    name: "Remboursements",
+    href: "/remboursements",
+    icon: Euro,
+    color: "text-indigo-600",
+    bgColor: "bg-indigo-50 hover:bg-indigo-100",
+  },
+  {
+    name: "Mon Profil",
+    href: "/profile",
+    icon: User,
+    color: "text-orange-600",
+    bgColor: "bg-orange-50 hover:bg-orange-100",
+  },
+];
+
+export default function DashboardLayout({
+  children,
+}: {
   children: React.ReactNode;
-}
-
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+}) {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const { user: currentUser, error } = await getCurrentUser();
+        if (error || !currentUser) {
+          console.log("❌ Pas d'utilisateur connecté, redirection vers /");
+          router.push("/");
+          return;
+        }
+        console.log("✅ Utilisateur connecté:", currentUser.email);
+        setUser(currentUser);
+      } catch (error) {
+        console.error(
+          "❌ Erreur lors de la vérification de l'utilisateur:",
+          error
+        );
+        router.push("/");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkUser();
+  }, [router]);
+
+  const handleSignOut = async () => {
+    try {
+      const { error } = await signOut();
+      if (!error) {
+        console.log("✅ Déconnexion réussie");
+        router.push("/");
+      } else {
+        console.error("❌ Erreur lors de la déconnexion:", error);
+      }
+    } catch (error) {
+      console.error("❌ Erreur inattendue lors de la déconnexion:", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Vérification de l'authentification...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar pour mobile */}
-      <div
-        className={`fixed inset-0 z-40 flex md:hidden ${
-          sidebarOpen ? "block" : "hidden"
-        }`}
-        role="dialog"
-        aria-modal="true"
-      >
+    <AuthGuard>
+      <div className="min-h-screen bg-gray-50">
+        {/* Sidebar pour mobile */}
         <div
-          className="fixed inset-0 bg-gray-600 bg-opacity-75"
-          aria-hidden="true"
-          onClick={() => setSidebarOpen(false)}
-        ></div>
-
-        <div className="relative flex w-full max-w-xs flex-1 flex-col bg-white pt-5 pb-4">
-          <div className="absolute top-0 right-0 -mr-12 pt-2">
-            <button
-              type="button"
-              className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-              onClick={() => setSidebarOpen(false)}
-            >
-              <span className="sr-only">Fermer le menu</span>
-              <svg
-                className="h-6 w-6 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
+          className={cn(
+            "fixed inset-0 z-50 lg:hidden",
+            sidebarOpen ? "block" : "hidden"
+          )}
+        >
+          <div
+            className="fixed inset-0 bg-gray-600 bg-opacity-75"
+            onClick={() => setSidebarOpen(false)}
+          />
+          <div className="fixed inset-y-0 left-0 flex w-72 flex-col bg-white shadow-xl">
+            <div className="flex h-16 items-center justify-between px-6 border-b bg-gradient-to-r from-blue-600 to-indigo-600">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <LayoutDashboard className="h-5 w-5 text-white" />
+                </div>
+                <h1 className="text-lg font-bold text-white">
+                  CSE Les PEP 973
+                </h1>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(false)}
+                className="text-white hover:bg-white/20"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-
-          <div className="flex flex-shrink-0 items-center px-4">
-            <span className="text-xl font-bold text-cse-primary">
-              CSE Admin
-            </span>
-          </div>
-          <div className="mt-5 h-0 flex-1 overflow-y-auto">
-            <nav className="space-y-1 px-2">
-              <SidebarContent />
-            </nav>
-          </div>
-        </div>
-      </div>
-
-      {/* Sidebar pour desktop */}
-      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
-        <div className="flex flex-col flex-grow border-r border-gray-200 bg-white pt-5 overflow-y-auto">
-          <div className="flex items-center flex-shrink-0 px-4">
-            <span className="text-xl font-bold text-cse-primary">
-              CSE Admin
-            </span>
-          </div>
-          <div className="mt-5 flex-grow flex flex-col">
-            <nav className="flex-1 space-y-1 px-2 pb-4">
-              <SidebarContent />
-            </nav>
-          </div>
-        </div>
-      </div>
-
-      {/* Contenu principal */}
-      <div className="md:pl-64 flex flex-col flex-1">
-        <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">
-          <button
-            type="button"
-            className="px-4 border-r border-gray-200 text-gray-500 md:hidden"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <span className="sr-only">Ouvrir le menu</span>
-            <svg
-              className="h-6 w-6"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
-          <div className="flex-1 px-4 flex justify-between">
-            <div className="flex-1 flex">
-              <h1 className="text-2xl font-semibold text-gray-900 self-center">
-                Tableau de bord
-              </h1>
+                <X className="h-5 w-5" />
+              </Button>
             </div>
-            <div className="ml-4 flex items-center md:ml-6">
-              <Button variant="cse">
-                <Link href="/">Retour au site</Link>
+            <nav className="flex-1 space-y-2 px-3 py-6">
+              {navigation.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={cn(
+                      "group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 hover:scale-[1.02] hover:shadow-sm",
+                      isActive
+                        ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg"
+                        : `text-gray-700 ${item.bgColor}`
+                    )}
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <div
+                      className={cn(
+                        "p-2 rounded-lg mr-3 transition-colors",
+                        isActive ? "bg-white/20" : `${item.color} bg-white`
+                      )}
+                    >
+                      <item.icon className="h-4 w-4" />
+                    </div>
+                    <span className="font-medium">{item.name}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+            <div className="border-t p-4">
+              <div className="flex items-center space-x-3 mb-4">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage
+                    src={user?.user_metadata?.avatar_url}
+                    alt={user?.user_metadata?.first_name || "Utilisateur"}
+                  />
+                  <AvatarFallback>
+                    {user?.user_metadata?.first_name?.charAt(0) ||
+                      user?.email?.charAt(0) ||
+                      "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {user?.user_metadata?.first_name}{" "}
+                    {user?.user_metadata?.last_name}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">
+                    {user?.email}
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={handleSignOut}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Se déconnecter
               </Button>
             </div>
           </div>
         </div>
 
-        <main className="flex-1">
-          <div className="py-6">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-              {children}
+        {/* Sidebar pour desktop */}
+        <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-72 lg:flex-col">
+          <div className="flex flex-col flex-grow bg-white border-r border-gray-200 shadow-lg">
+            <div className="flex h-16 items-center px-6 border-b bg-gradient-to-r from-blue-600 to-indigo-600">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <LayoutDashboard className="h-6 w-6 text-white" />
+                </div>
+                <h1 className="text-lg font-bold text-white">
+                  CSE Les PEP 973
+                </h1>
+              </div>
+            </div>
+            <nav className="flex-1 space-y-2 px-4 py-6">
+              {navigation.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={cn(
+                      "group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 hover:scale-[1.02] hover:shadow-sm",
+                      isActive
+                        ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg"
+                        : `text-gray-700 ${item.bgColor}`
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "p-2 rounded-lg mr-3 transition-colors",
+                        isActive ? "bg-white/20" : `${item.color} bg-white`
+                      )}
+                    >
+                      <item.icon className="h-4 w-4" />
+                    </div>
+                    <span className="font-medium">{item.name}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+            <div className="border-t p-4">
+              <div className="flex items-center space-x-3 mb-4">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage
+                    src={user?.user_metadata?.avatar_url}
+                    alt={user?.user_metadata?.first_name || "Utilisateur"}
+                  />
+                  <AvatarFallback>
+                    {user?.user_metadata?.first_name?.charAt(0) ||
+                      user?.email?.charAt(0) ||
+                      "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {user?.user_metadata?.first_name}{" "}
+                    {user?.user_metadata?.last_name}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">
+                    {user?.email}
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={handleSignOut}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Se déconnecter
+              </Button>
             </div>
           </div>
-        </main>
+        </div>
+
+        {/* Contenu principal */}
+        <div className="lg:pl-72">
+          {/* Header mobile */}
+          <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-indigo-600 px-4 shadow-lg lg:hidden">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSidebarOpen(true)}
+              className="text-white hover:bg-white/20"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            <div className="flex-1 flex items-center gap-3">
+              <div className="p-1.5 bg-white/20 rounded-lg">
+                <LayoutDashboard className="h-4 w-4 text-white" />
+              </div>
+              <h1 className="text-lg font-bold text-white">CSE Les PEP 973</h1>
+            </div>
+            <Avatar className="h-8 w-8">
+              <AvatarImage
+                src={user?.user_metadata?.avatar_url}
+                alt={user?.user_metadata?.first_name || "Utilisateur"}
+              />
+              <AvatarFallback>
+                {user?.user_metadata?.first_name?.charAt(0) ||
+                  user?.email?.charAt(0) ||
+                  "U"}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+
+          {/* Contenu de la page */}
+          <main className="flex-1">{children}</main>
+        </div>
       </div>
-    </div>
+    </AuthGuard>
   );
-}
-
-function SidebarContent() {
-  return (
-    <>
-      <SidebarItem href="/admin" icon="dashboard" text="Tableau de bord" />
-      <SidebarItem href="/admin/users" icon="users" text="Utilisateurs" />
-      <SidebarItem href="/admin/blog" icon="document" text="Blog" />
-      <SidebarItem href="/admin/tickets" icon="ticket" text="Tickets" />
-      <SidebarItem
-        href="/admin/remboursements"
-        icon="cash"
-        text="Remboursements"
-      />
-      <SidebarItem href="/admin/settings" icon="settings" text="Paramètres" />
-    </>
-  );
-}
-
-interface SidebarItemProps {
-  href: string;
-  icon: string;
-  text: string;
-}
-
-function SidebarItem({ href, icon, text }: SidebarItemProps) {
-  return (
-    <Link
-      href={href}
-      className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-    >
-      <SidebarIcon icon={icon} />
-      {text}
-    </Link>
-  );
-}
-
-function SidebarIcon({ icon }: { icon: string }) {
-  switch (icon) {
-    case "dashboard":
-      return (
-        <svg
-          className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-          />
-        </svg>
-      );
-    case "users":
-      return (
-        <svg
-          className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-          />
-        </svg>
-      );
-    case "document":
-      return (
-        <svg
-          className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-          />
-        </svg>
-      );
-    case "ticket":
-      return (
-        <svg
-          className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"
-          />
-        </svg>
-      );
-    case "cash":
-      return (
-        <svg
-          className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-          />
-        </svg>
-      );
-    case "settings":
-      return (
-        <svg
-          className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-          />
-        </svg>
-      );
-    default:
-      return null;
-  }
 }

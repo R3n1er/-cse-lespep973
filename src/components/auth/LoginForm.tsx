@@ -60,6 +60,8 @@ export default function LoginForm() {
       setError(errorMessage);
     } else if (data.user) {
       console.log("✅ Connexion réussie:", data.user.email);
+      console.log("✅ Session data:", data.session);
+      console.log("✅ User data:", data.user);
 
       // Notification de succès
       toast.success("✅ Connexion réussie", {
@@ -68,10 +70,11 @@ export default function LoginForm() {
       });
 
       console.log("🔄 Redirection vers /dashboard...");
+      console.log("🔄 Router ready:", !!router);
 
-      // Redirection immédiate après connexion réussie
+      // Redirection forcée avec window.location.href
       setTimeout(() => {
-        console.log("🔄 Redirection immédiate...");
+        console.log("🔄 Redirection forcée avec window.location.href...");
         window.location.href = "/dashboard";
       }, 1000);
     } else {

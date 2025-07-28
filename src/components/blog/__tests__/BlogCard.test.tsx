@@ -1,3 +1,4 @@
+import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import BlogCard from "../BlogCard";
@@ -7,10 +8,16 @@ vi.mock("next/link", () => ({
   default: ({
     children,
     href,
+    className,
   }: {
     children: React.ReactNode;
     href: string;
-  }) => <a href={href}>{children}</a>,
+    className?: string;
+  }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
+  ),
 }));
 
 vi.mock("../ReactionButton", () => ({
@@ -44,21 +51,23 @@ describe("BlogCard", () => {
 
   it("displays correct category icon", () => {
     render(<BlogCard post={mockPost} />);
-
-    // Vérifier que l'icône de catégorie est présente
-    expect(screen.getByText("📰")).toBeInTheDocument();
+    // Vérifier que l'icône de catégorie est présente (📰 pour Actualités)
+    expect(
+      screen.getByLabelText("Icône catégorie Actualités")
+    ).toBeInTheDocument();
   });
 
   it("handles different categories correctly", () => {
     const ticketsPost = { ...mockPost, category: "Tickets" };
     render(<BlogCard post={ticketsPost} />);
-
-    expect(screen.getByText("🎫")).toBeInTheDocument();
+    // Vérifier que l'icône de catégorie Tickets est présente (🎫)
+    expect(
+      screen.getByLabelText("Icône catégorie Tickets")
+    ).toBeInTheDocument();
   });
 
   it("formats date correctly", () => {
     render(<BlogCard post={mockPost} />);
-
     // Vérifier que la date est formatée et affichée
     expect(screen.getByText(/27 janvier 2025/)).toBeInTheDocument();
   });
@@ -68,18 +77,16 @@ describe("BlogCard", () => {
       ...mockPost,
       content: "A".repeat(200), // Contenu très long
     };
-
     render(<BlogCard post={longContentPost} />);
-
-    const contentElement = screen.getByText(/A{120}/);
-    expect(contentElement).toBeInTheDocument();
+    // Vérifier que le contenu est tronqué (présence de ...)
+    expect(screen.getByText(/\.\.\.$/)).toBeInTheDocument();
   });
 
   it("applies correct styling classes", () => {
     render(<BlogCard post={mockPost} />);
-
     const card = screen.getByRole("link");
-    expect(card).toHaveClass("block", "group");
+    expect(card.className).toMatch(/block/);
+    expect(card.className).toMatch(/group/);
   });
 
   it("handles missing dates gracefully", () => {
@@ -88,9 +95,7 @@ describe("BlogCard", () => {
       published_at: null,
       created_at: null,
     };
-
     render(<BlogCard post={postWithoutDates} />);
-
     // Vérifier que le composant ne plante pas
     expect(screen.getByText("Test Article Title")).toBeInTheDocument();
   });

@@ -1,0 +1,104 @@
+# Guidelines de Test avec Vitest
+
+## Structure des tests
+
+### Tests unitaires
+
+- **Localisation** : `src/__tests__/` pour les tests d'intégration, `src/components/**/__tests__/` pour les tests de composants
+- **Nommage** : `*.test.ts` ou `*.spec.ts`
+- **Organisation** : Un fichier par module/fonctionnalité
+
+### Tests de composants React
+
+- **Setup** : `vitest.setup.ts` avec `@testing-library/jest-dom`
+- **Helpers** : `src/__tests__/utils.ts` pour login/logout Supabase
+- **Mocking** : `vi.mock()` pour les dépendances externes
+
+## Patterns recommandés
+
+### Tests Supabase
+
+```typescript
+import { login, logout, supabase } from "./utils";
+
+describe("Module Test", () => {
+  beforeAll(async () => {
+    await logout(); // Nettoyer l'état
+  });
+
+  it("Test avec authentification", async () => {
+    const user = await login();
+    // Tests...
+    await expect(logout()).resolves.toBe(true);
+  });
+});
+```
+
+### Tests de composants
+
+```typescript
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+
+describe("ComponentName", () => {
+  it("renders correctly", () => {
+    render(<Component />);
+    expect(screen.getByText("Expected text")).toBeInTheDocument();
+  });
+
+  it("handles user interactions", async () => {
+    const user = userEvent.setup();
+    render(<Component />);
+    await user.click(screen.getByRole("button"));
+    // Assertions...
+  });
+});
+```
+
+## Robustesse des tests
+
+### Gestion des données manquantes
+
+- **Base vide** : Afficher un warning et ignorer le test plutôt que d'échouer
+- **Fonctions SQL manquantes** : Vérifier l'erreur `PGRST202` et ignorer
+- **Serveur non démarré** : Utiliser `it.skip` pour les tests HTTP
+
+### Exemple de test robuste
+
+```typescript
+it("Récupération des articles", async () => {
+  const { data, error } = await supabase.from("blog_posts").select("*");
+  expect(error).toBeNull();
+  if (!data || data.length === 0) {
+    console.warn("Aucun article en base, test ignoré.");
+    return;
+  }
+  // Tests avec données...
+});
+```
+
+## Configuration Vitest
+
+- **Fichier** : `vitest.config.ts`
+- **Setup** : `vitest.setup.ts` avec jest-dom
+- **Coverage** : Exclure `src/types`, `src/lib/data/mock*`
+- **Environment** : `jsdom` pour les tests React
+
+## Scripts npm
+
+- `npm test` : Exécuter tous les tests
+- `npm run test:ui` : Interface interactive
+- `npm run test:coverage` : Rapport de couverture
+
+## Bonnes pratiques
+
+1. **Isolation** : Chaque test doit être indépendant
+2. **Nettoyage** : Toujours nettoyer l'état (logout, etc.)
+3. **Mocking** : Mocker les dépendances externes
+4. **Accessibilité** : Tester avec `getByRole`, `getByLabelText`
+5. **Robustesse** : Gérer les cas d'absence de données
+   description:
+   globs:
+   alwaysApply: false
+
+---

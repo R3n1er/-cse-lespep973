@@ -1,0 +1,244 @@
+# Patterns Next.js 15 avec App Router
+
+## Structure App Router
+
+### Organisation des dossiers
+
+```
+src/app/
+├── (auth)/          # Route groups pour l'authentification
+├── (dashboard)/     # Route groups pour le dashboard
+├── (public)/        # Route groups pour les pages publiques
+├── blog/            # Pages du blog
+├── contact/         # Pages de contact
+├── layout.tsx       # Layout racine
+├── page.tsx         # Page d'accueil
+└── globals.css      # Styles globaux
+```
+
+### Route Groups
+
+- **Syntaxe** : `(nom-du-groupe)/`
+- **Usage** : Organiser les routes sans affecter l'URL
+- **Exemple** : `(dashboard)/blog/page.tsx` → URL `/blog`
+
+## Composants et Pages
+
+### Layout Pattern
+
+```typescript
+// src/app/layout.tsx
+import { Providers } from "@/components/providers";
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="fr">
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+}
+```
+
+### Page Pattern
+
+```typescript
+// src/app/blog/page.tsx
+import { BlogList } from "@/components/blog/BlogList";
+
+export default async function BlogPage() {
+  // Server Component - données côté serveur
+  const posts = await getBlogPosts();
+
+  return (
+    <div className="container mx-auto">
+      <h1>Blog</h1>
+      <BlogList posts={posts} />
+    </div>
+  );
+}
+```
+
+### Dynamic Routes
+
+```typescript
+// src/app/blog/[slug]/page.tsx
+export default async function BlogPostPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const post = await getBlogPost(params.slug);
+
+  return (
+    <article>
+      <h1>{post.title}</h1>
+      <div>{post.content}</div>
+    </article>
+  );
+}
+```
+
+## Composants React
+
+### Client Components
+
+```typescript
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+
+export function BlogCard({ post }: { post: BlogPost }) {
+  const [isLiked, setIsLiked] = useState(false);
+
+  return (
+    <div className="card">
+      <h2>{post.title}</h2>
+      <Button onClick={() => setIsLiked(!isLiked)}>
+        {isLiked ? "❤️" : "🤍"}
+      </Button>
+    </div>
+  );
+}
+```
+
+### Server Components (par défaut)
+
+```typescript
+// Pas de 'use client' - Server Component
+import { formatDate } from "@/lib/utils";
+
+export function BlogPost({ post }: { post: BlogPost }) {
+  return (
+    <article className="prose">
+      <h1>{post.title}</h1>
+      <time>{formatDate(post.created_at)}</time>
+      <div>{post.content}</div>
+    </article>
+  );
+}
+```
+
+## Middleware
+
+### Pattern de middleware
+
+```typescript
+// src/middleware.ts
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export async function middleware(req: NextRequest) {
+  const res = NextResponse.next();
+  const supabase = createMiddlewareClient({ req, res });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  // Protection des routes dashboard
+  if (req.nextUrl.pathname.startsWith("/dashboard") && !session) {
+    return NextResponse.redirect(new URL("/auth/login", req.url));
+  }
+
+  return res;
+}
+
+export const config = {
+  matcher: ["/dashboard/:path*", "/auth/:path*"],
+};
+```
+
+## Styling et UI
+
+### Tailwind CSS
+
+```typescript
+// Classes utilitaires
+<div className="container mx-auto px-4 py-8">
+  <h1 className="text-3xl font-bold text-gray-900">Titre principal</h1>
+  <p className="text-gray-600 mt-4">Description</p>
+</div>
+```
+
+### Composants UI (Shadcn/ui)
+
+```typescript
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+
+export function TicketCard({ ticket }: { ticket: Ticket }) {
+  return (
+    <Card>
+      <CardHeader>
+        <h3>{ticket.name}</h3>
+      </CardHeader>
+      <CardContent>
+        <p>{ticket.description}</p>
+        <Button>Commander</Button>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+## Gestion d'état
+
+### Server State (Supabase)
+
+```typescript
+// Server Components pour les données
+async function getBlogPosts() {
+  const supabase = createServerComponentClient({ cookies });
+  const { data } = await supabase.from("blog_posts").select("*");
+  return data;
+}
+```
+
+### Client State (React)
+
+```typescript
+"use client";
+
+import { useState, useEffect } from "react";
+
+export function BlogSearch() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [results, setResults] = useState([]);
+
+  useEffect(() => {
+    // Recherche côté client
+  }, [searchTerm]);
+
+  return (
+    <input
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      placeholder="Rechercher..."
+    />
+  );
+}
+```
+
+## Bonnes pratiques
+
+1. **Server Components par défaut** : Utiliser les Server Components sauf si besoin d'interactivité
+2. **Route Groups** : Organiser les routes logiquement
+3. **Layouts** : Réutiliser les layouts avec les route groups
+4. **Middleware** : Protéger les routes sensibles
+5. **Types** : Utiliser TypeScript pour tous les composants
+6. **Accessibilité** : Utiliser les balises sémantiques et les attributs ARIA
+7. **Performance** : Optimiser les images avec `next/image`
+8. **SEO** : Utiliser les métadonnées et les balises appropriées
+   description:
+   globs:
+   alwaysApply: false
+
+---

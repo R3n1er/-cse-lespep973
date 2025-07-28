@@ -28,12 +28,16 @@
     "test-blog-ui": "tsx scripts/tests/test-blog-ui.ts",
     "test-blog-complete": "tsx scripts/tests/test-blog-complete.ts",
     "create-blog-data": "tsx scripts/create-blog-data.ts",
-    "create-blog-data-admin": "tsx scripts/create-blog-data-admin.ts"
+    "create-blog-data-admin": "tsx scripts/create-blog-data-admin.ts",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.0",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.3",
     "@sentry/nextjs": "^9.42.0",
     "@supabase/ssr": "^0.6.1",
@@ -69,7 +73,15 @@
   },
   "devDependencies": {
     "@shadcn/ui": "^0.0.4",
-    "dotenv": "^16.4.7",
-    "tsx": "^4.19.2"
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
+    "dotenv": "^16.6.1",
+    "jsdom": "^26.1.0",
+    "tsx": "^4.19.2",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
   }
 }

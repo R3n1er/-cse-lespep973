@@ -1,0 +1,178 @@
+# Workflow de Développement
+
+## Scripts npm principaux
+
+### Développement
+
+```bash
+npm run dev          # Démarrer le serveur de développement
+npm run build        # Build de production
+npm run start        # Démarrer le serveur de production
+npm run lint         # Vérifier le code avec ESLint
+```
+
+### Tests
+
+```bash
+npm test             # Exécuter tous les tests Vitest
+npm run test:ui      # Interface interactive Vitest
+npm run test:coverage # Rapport de couverture
+npm run test:watch   # Mode watch pour les tests
+```
+
+### Base de données
+
+```bash
+npx supabase start   # Démarrer Supabase local
+npx supabase stop    # Arrêter Supabase local
+npx supabase db push # Pousser les migrations
+npx supabase db pull # Tirer les migrations
+npx supabase gen types typescript > src/lib/supabase/types.ts
+```
+
+## Workflow de développement
+
+### 1. Démarrage du projet
+
+```bash
+# Installer les dépendances
+npm install
+
+# Copier les variables d'environnement
+cp .env.example .env.local
+# Éditer .env.local avec les vraies valeurs
+
+# Démarrer le serveur de développement
+npm run dev
+```
+
+### 2. Développement de fonctionnalités
+
+1. **Créer/modifier les composants** dans `src/components/`
+2. **Ajouter les pages** dans `src/app/`
+3. **Définir les types** dans `src/lib/supabase/types.ts`
+4. **Créer les services** dans `src/services/`
+5. **Écrire les tests** dans `src/__tests__/`
+
+### 3. Tests et qualité
+
+```bash
+# Tests unitaires et d'intégration
+npm test
+
+# Tests avec interface graphique
+npm run test:ui
+
+# Vérification de la couverture
+npm run test:coverage
+
+# Tests E2E (si serveur démarré)
+npx playwright test
+```
+
+### 4. Base de données
+
+```bash
+# Créer une migration
+npx supabase migration new nom_de_la_migration
+
+# Appliquer les migrations
+npx supabase db push
+
+# Générer les types TypeScript
+npx supabase gen types typescript --project-id your-project-id > src/lib/supabase/types.ts
+
+# Seed des données de test
+npx tsx scripts/seed-supabase-test-data.ts
+```
+
+## Structure des commits
+
+### Convention de nommage
+
+```
+feat: ajouter la gestion des tickets
+fix: corriger l'authentification Supabase
+test: ajouter les tests pour BlogCard
+docs: mettre à jour le README
+refactor: simplifier TicketService
+```
+
+### Types de commits
+
+- `feat:` : Nouvelles fonctionnalités
+- `fix:` : Corrections de bugs
+- `test:` : Ajout/modification de tests
+- `docs:` : Documentation
+- `refactor:` : Refactorisation
+- `style:` : Formatage du code
+- `perf:` : Améliorations de performance
+
+## Bonnes pratiques
+
+### Code
+
+1. **TypeScript strict** : Utiliser les types partout
+2. **ESLint** : Respecter les règles de linting
+3. **Prettier** : Formatage automatique du code
+4. **Tests** : Écrire des tests pour chaque fonctionnalité
+5. **Accessibilité** : Utiliser les attributs ARIA
+
+### Git
+
+1. **Branches** : Une branche par fonctionnalité
+2. **Commits** : Messages clairs et descriptifs
+3. **Pull Requests** : Code review obligatoire
+4. **Tests** : Tous les tests doivent passer
+
+### Base de données
+
+1. **Migrations** : Toujours versionner les changements
+2. **RLS** : Activer la sécurité au niveau des lignes
+3. **Types** : Générer les types après chaque migration
+4. **Seed** : Maintenir des données de test
+
+### Tests
+
+1. **Unitaires** : Tester les fonctions isolément
+2. **Intégration** : Tester les interactions
+3. **E2E** : Tester les parcours utilisateur
+4. **Coverage** : Maintenir >80% de couverture
+
+## Déploiement
+
+### Vercel
+
+```bash
+# Build automatique sur push vers main
+git push origin main
+
+# Variables d'environnement dans Vercel Dashboard
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+```
+
+### Supabase
+
+- **Production** : Utiliser le projet Supabase de production
+- **Staging** : Utiliser un projet Supabase séparé
+- **Local** : Utiliser Supabase CLI pour le développement
+
+## Monitoring et debugging
+
+### Logs
+
+- **Vercel** : Logs de déploiement et runtime
+- **Supabase** : Logs de base de données et Edge Functions
+- **Browser** : Console pour le debugging client
+
+### Outils
+
+- **React DevTools** : Inspection des composants
+- **Supabase Dashboard** : Gestion de la base de données
+- **Vitest UI** : Interface de test interactive
+  description:
+  globs:
+  alwaysApply: false
+
+---

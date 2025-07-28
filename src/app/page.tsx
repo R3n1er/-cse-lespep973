@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import LoginForm from "@/components/auth/LoginForm";
+import NewsletterSignup from "@/components/newsletter/NewsletterSignup";
 import {
   Shield,
   Building2,
@@ -201,6 +202,10 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <section className="max-w-xl mx-auto py-12">
+        <h2 className="text-xl font-bold mb-4">Recevez nos actualités</h2>
+        <NewsletterSignup />
+      </section>
     </div>
   );
 }

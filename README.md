@@ -355,3 +355,32 @@ Pour toute question ou support, contactez l'équipe technique du CSE Les PEP 973
 **Dernière mise à jour :** 27 Janvier 2025  
 **Version :** 2.2  
 **Statut :** Phase 1 - Développement actif 🚀
+
+---
+
+## 🆕 Changelog Janvier 2025
+
+- Migration des tests automatisés vers **Vitest** (unitaires, intégration, UI)
+- Refactorisation des composants pour l’accessibilité et la robustesse
+- Automatisation du workflow de test (CI/CD, couverture, interface interactive)
+- Documentation technique enrichie (README, PRD, scripts npm)
+
+---
+
+## 🧪 Tests avec Vitest (mise à jour)
+
+- Lancer tous les tests :
+  ```bash
+  npm test
+  ```
+- Lancer l'interface interactive :
+  ```bash
+  npm run test:ui
+  ```
+- Générer un rapport de couverture :
+  ```bash
+  npm run test:coverage
+  ```
+
+Les tests sont situés dans `src/__tests__/` ou à côté des composants (`__tests__`).
+Vitest remplace progressivement les scripts CLI historiques du dossier `scripts/tests/`.
