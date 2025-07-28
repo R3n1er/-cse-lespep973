@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   LayoutDashboard,
   User,
-  Ticket,
+  Film,
   Euro,
   MessageSquare,
   Bell,
@@ -40,7 +40,7 @@ const navigation = [
   {
     name: "Tickets Cinéma",
     href: "/tickets",
-    icon: Ticket,
+    icon: Film,
     color: "text-emerald-600",
     bgColor: "bg-emerald-50 hover:bg-emerald-100",
   },
