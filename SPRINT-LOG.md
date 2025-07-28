@@ -210,6 +210,26 @@
 3. **Préparation au déploiement**
 4. **Tests d'intégration**
 
+### **Sprint 5 - Module Tickets Cinéma (5-12 Février)**
+
+1. **Développement système de commande tickets cinéma**
+
+   - Interface commande pour salariés (Agora Cayenne / Uranus Kourou)
+   - Limitation 5 tickets max par salarié/mois
+   - Intégration Stripe pour paiement CB
+   - Prix réduits CSE
+
+2. **Base de données tickets**
+
+   - Tables cinema_orders, cinema_tickets
+   - Politiques RLS et gestion quotas
+   - Historique commandes salariés
+
+3. **Interface utilisateur**
+   - Sélection cinéma (Agora/Uranus)
+   - Panier avec validation quantité
+   - Processus paiement Stripe sécurisé
+
 ### **Sprint 6 - Analytics et Optimisation (17-24 Février)**
 
 1. **Intégration Vercel Analytics**

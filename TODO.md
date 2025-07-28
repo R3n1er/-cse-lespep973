@@ -111,8 +111,9 @@
 
 - [ ] **STATUT** : 🟡 Page créée
 - [ ] Interface de création d'événements
-- [ ] Gestion des séances et horaires
-- [ ] Système de réservation de tickets
+- [ ] Gestion des séances et horaires - Abandonner cette fonctionnalité
+- Interface de commande de ticket cinéma pour les salariés (Les salarié Peuvent commander des tickets de cinéma à prix réduit pour les deux cinémas existant en Guyane, c'est à dire Agora pour l'île de Cayenne et Uranus pour la ville de Kourou.)
+- [ ] Système de réservation de tickets cinéma pour les cinéma Agora et Uranus. Commande possible par Groupe de 5 tickets. Pas plus de 5 tickets commandé par salarié par mois. Paiement par CB Stripe.
 - [ ] Gestion des quantités disponibles
 
 #### 1.3 Fonctionnalités Utilisateur

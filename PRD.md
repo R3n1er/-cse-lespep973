@@ -303,35 +303,68 @@ L'application web du CSE de l'association LES PEP GUYANE vise à moderniser et c
 - Sondages anonymes ou nominatifs
 - Analyse des résultats et exportation
 
-### 3.3 Gestion des Tickets
+### 3.3 Gestion des Tickets Cinéma
 
-#### 3.3.1 Catalogue de Tickets
+#### 3.3.1 Spécifications Métier - Cinémas Guyane
 
-- Affichage des tickets disponibles avec description
-- Indication de stock en temps réel
-- Filtrage par catégorie et prix
-- Historique des achats précédents
+**Cinémas Partenaires :**
 
-#### 3.3.2 Processus de Commande
+- **Agora** : Île de Cayenne (Guyane)
+- **Uranus** : Ville de Kourou (Guyane)
 
-- Panier d'achat multi-tickets
-- Validation des limites par utilisateur
-- Confirmation par email
-- Suivi de statut de commande
+**Règles de Commande :**
 
-#### 3.3.3 Distribution et Gestion
+- Maximum 5 tickets par salarié par mois calendaire
+- Prix réduits CSE (tarifs négociés avec les cinémas)
+- Commande groupée obligatoire (minimum 1, maximum 5 tickets)
+- Paiement exclusif par carte bancaire (Stripe)
 
-- Génération de QR codes pour tickets électroniques
-- Système de validation lors de la distribution
-- Gestion des annulations et remboursements
-- Rapports de vente et distribution
+#### 3.3.2 Interface de Commande Simplifiée
 
-#### 3.3.4 Gestion Avancée des Stocks
+**Sélection du Cinéma :**
 
-- Liste d'attente automatique lorsque les stocks sont épuisés
-- Notifications aux utilisateurs quand les tickets redeviennent disponibles
-- Règles claires pour les annulations tardives
-- Alertes automatiques pour réapprovisionnement des stocks critiques
+- Choix entre Agora (Cayenne) ou Uranus (Kourou)
+- Affichage des tarifs CSE réduits par cinéma
+- Indication de la géolocalisation pour aide au choix
+
+**Processus de Commande :**
+
+- Sélection quantité (1 à 5 tickets max)
+- Vérification automatique du quota mensuel restant
+- Calcul du montant total avec remise CSE
+- Validation et paiement Stripe sécurisé
+
+#### 3.3.3 Gestion des Quotas et Limitations
+
+**Système de Quotas :**
+
+- Compteur mensuel par salarié (reset automatique chaque 1er du mois)
+- Vérification en temps réel avant validation commande
+- Historique des commandes par mois avec détails
+- Alerte utilisateur si quota proche de la limite
+
+**Validation des Commandes :**
+
+- Contrôle éligibilité salarié (statut actif CSE)
+- Vérification quota mensuel disponible
+- Validation paiement Stripe avant génération tickets
+- Email de confirmation avec détails commande
+
+#### 3.3.4 Distribution et Utilisation
+
+**Tickets Électroniques :**
+
+- Génération PDF avec QR code unique par ticket
+- Envoi automatique par email après paiement validé
+- Code de retrait à présenter aux cinémas partenaires
+- Validité limitée dans le temps (à définir avec partenaires)
+
+**Gestion des Cinémas Partenaires :**
+
+- Interface admin pour gérer les tarifs négociés
+- Mise à jour des disponibilités par cinéma
+- Rapports de consommation pour négociation tarifaire
+- Suivi des utilisations effectives par cinéma
 
 ### 3.4 Remboursements Conditionnels
 
