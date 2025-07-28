@@ -29,7 +29,7 @@ CREATE POLICY "Users can update own profile" ON users
 
 -- Politique pour blog_posts (lecture publique, écriture admin)
 CREATE POLICY "Public read access for blog posts" ON blog_posts
-    FOR SELECT USING (published = true);
+    FOR SELECT USING (status = 'published');
 
 CREATE POLICY "Admin write access for blog posts" ON blog_posts
     FOR ALL USING (
@@ -58,7 +58,7 @@ CREATE POLICY "Users can update own comments" ON blog_comments
         EXISTS (
             SELECT 1 FROM users 
             WHERE users.id = auth.uid() 
-            AND users.id = blog_comments.user_id
+            AND users.id = blog_comments.author_id
         )
     );
 

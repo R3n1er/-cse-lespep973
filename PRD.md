@@ -2,11 +2,11 @@
 
 # CSE LES PEP 973 - Application Portail Web de Gestion
 
-**Version:** 2.2  
+**Version:** 2.3  
 **Date:** 27 Janvier 2025  
 **Auteur:** Équipe Technique CSE Les PEP 973
 
-**Mise à jour :** Migration de Clerk vers Supabase Auth + Ajout des scripts d'authentification et de test
+**Mise à jour :** Améliorations majeures du blog + Tests complets + Refactorisation senior
 
 ## Table des matières
 
@@ -951,11 +951,12 @@ flowchart TD
 
 #### **Authentification et Sécurité**
 
-- ✅ **Intégration Clerk** : Authentification moderne avec JWT
+- ✅ **Migration Supabase Auth** : Authentification moderne avec JWT
 - ✅ **Restriction de domaine** : Blocage des emails `@lepep973.org`
 - ✅ **Demande d'accès** : Formulaire pour utilisateurs non injectés
 - ✅ **Middleware sécurisé** : Protection des routes et gestion des rôles
 - ✅ **Politiques RLS** : Sécurité au niveau des lignes en base de données
+- ✅ **Tests automatisés** : Scripts de test d'authentification complets
 
 #### **Blog et Communication**
 
@@ -964,6 +965,11 @@ flowchart TD
 - ✅ **Réactions/Likes** : Système de likes avec compteur temps réel
 - ✅ **Articles similaires** : Algorithme intelligent de recommandations
 - ✅ **Newsletter** : Inscription, gestion des abonnements, notifications
+- ✅ **Composants modulaires** : BlogCard, BlogStats, CategoryFilter
+- ✅ **Hook personnalisé** : useBlog pour gestion centralisée
+- ✅ **Tests complets** : 4 phases de tests automatisés
+- ✅ **Refactorisation senior** : Architecture modulaire et maintenable
+- ✅ **Documentation** : BLOG_AMELIORATIONS.md créé
 
 #### **Interface Utilisateur**
 

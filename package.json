@@ -21,7 +21,14 @@
     "test-ui-flow": "tsx scripts/tests/test-ui-flow.ts",
     "test-redirect": "tsx scripts/tests/test-redirect.ts",
     "clear-cookies": "tsx scripts/tests/clear-clerk-cookies.ts",
-    "test-all": "tsx scripts/tests/run-all-tests.ts"
+    "test-all": "tsx scripts/tests/run-all-tests.ts",
+    "test-blog": "tsx scripts/tests/test-blog.ts",
+    "test-blog-advanced": "tsx scripts/tests/test-blog-advanced.ts",
+    "test-blog-features": "tsx scripts/tests/test-blog-features.ts",
+    "test-blog-ui": "tsx scripts/tests/test-blog-ui.ts",
+    "test-blog-complete": "tsx scripts/tests/test-blog-complete.ts",
+    "create-blog-data": "tsx scripts/create-blog-data.ts",
+    "create-blog-data-admin": "tsx scripts/create-blog-data-admin.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.0",
